@@ -65,8 +65,8 @@ Image-Classification with Random Forest an example script if you want to do imag
   "keywords": [
     
   ],
-  "articleBody": "C19-Dashboard  COVID-19 Dashboard Monitoring https://ahmadhusain.shinyapps.io/covid19-dashboard/\n Dashboard monitor pandemic situation globally and in Indonesia. Built using Shiny and Shinydashboard in R. This project aims to provide the information visually the total number of confirmed cases, recovered, and death. The data will be updated automatically every hour.\nImage-Classification with Random Forest an example script if you want to do image-classification stuff with Random Forest. The datasets are available at Malaria Dataset cell_images.zip. Please download so you can follow the script.\nHere is a quick brief of the project workflow.\nIf you want to try predict an image, please use one of the cell images listed here.\n Ya, we know it’s not a best measure to inference image by using Random Forest :p\n  Learn-R Data Visualization  Apply sortable \u0026 parsons to learnr tutorials https://ahmadhusain.shinyapps.io/learnr-dv/\n learnr-dv is an interactive tutorial and exercise built with learnr, parsons and sortable packages. The tutorial consist of content about understanding the context of visualize the data using ggplot2.\nML in R Cheatsheet  Machine Learning Modelling in R Cheatsheet. https://github.com/ahmadhusain/mlinR-cheatsheet\n Is a cheat sheet to help determine what machine learning algorithms appropriate to used. Also for further improvement will be adding case examples for each machine learning method using R, obviously.\nCapstone Project Leaderboard  Shinyapps for automated scoring https://github.com/teamalgoritma/capstoneml-leaderboard\n build leaderboard using shiny for machine learning capstone project in Algoritma Data Science Academy.\n",
-  "wordCount" : "224",
+  "articleBody": "C19-Dashboard  COVID-19 Dashboard Monitoring https://ahmadhusain.shinyapps.io/covid19-dashboard/\n Dashboard monitor pandemic situation globally and in Indonesia. Built using Shiny and Shinydashboard in R. This project aims to provide the information visually the total number of confirmed cases, recovered, and death. The data will be updated automatically every hour.\nImage-Classification with Random Forest an example script if you want to do image-classification stuff with Random Forest. The datasets are available at Malaria Dataset cell_images.zip. Please download so you can follow the script.\nHere is a quick brief of the project workflow.\nIf you want to try predict an image, please use one of the cell images listed here.\n Ya, we know it’s not a best measure to inference image by using Random Forest :p\n R package: cmplot  cmplot is a developed packages for create confusion matrix graph for Optimizing Probability Thresholds.\n You can install the development version of cmplot using:\n# install.packages(\"remotes\")\rremotes::install_github(\"ahmadhusain/cmplot\")\rlibrary(dplyr)\rlibrary(caret)\rlibrary(tidyr)\rlibrary(ggplot2)\rlibrary(plotly)\rlibrary(cmplot)\rload(\"data-raw/churn_prediction.RData\")\rSave the probability results from your model and actual data in the following format:\nhead(data_pkg)\r   probability churn_status     0.294 Yes   0.794 Yes   0.275 No   0.161 No   0.00769 No   0.555 No    confmat_plot(data_pkg$probability, data_pkg$churn_status, \"Yes\", \"No\")\rLearn-R Data Visualization  Apply sortable \u0026 parsons to learnr tutorials https://ahmadhusain.shinyapps.io/learnr-dv/\n learnr-dv is an interactive tutorial and exercise built with learnr, parsons and sortable packages. The tutorial consist of content about understanding the context of visualize the data using ggplot2.\nML in R Cheatsheet  Machine Learning Modelling in R Cheatsheet. https://github.com/ahmadhusain/mlinR-cheatsheet\n Is a cheat sheet to help determine what machine learning algorithms appropriate to used. Also for further improvement will be adding case examples for each machine learning method using R, obviously.\nCapstone Project Leaderboard  Shinyapps for automated scoring https://github.com/teamalgoritma/capstoneml-leaderboard\n build leaderboard using shiny for machine learning capstone project in Algoritma Data Science Academy.\n",
+  "wordCount" : "293",
   "inLanguage": "en",
   "datePublished": "0001-01-01T00:00:00Z",
   "dateModified": "0001-01-01T00:00:00Z",
@@ -218,6 +218,8 @@ Image-Classification with Random Forest an example script if you want to do imag
                 <li>
                     <a href="#image-classification-with-random-forest" aria-label="Image-Classification with Random Forest">Image-Classification with Random Forest</a></li>
                 <li>
+                    <a href="#r-package-cmplot" aria-label="R package: cmplot">R package: <code>cmplot</code></a></li>
+                <li>
                     <a href="#learn-r-data-visualization" aria-label="Learn-R Data Visualization">Learn-R Data Visualization</a></li>
                 <li>
                     <a href="#ml-in-r-cheatsheet" aria-label="ML in R Cheatsheet">ML in R Cheatsheet</a></li>
@@ -247,7 +249,60 @@ Image-Classification with Random Forest an example script if you want to do imag
 </blockquote>
 <p><img loading="lazy" src="/img/model-eval.png" alt=""  />
 </p>
-<hr>
+<h1 id="r-package-cmplot">R package: <code>cmplot</code><a hidden class="anchor" aria-hidden="true" href="#r-package-cmplot">#</a></h1>
+<blockquote>
+<p>cmplot is a developed packages for create confusion matrix graph for Optimizing Probability Thresholds.</p>
+</blockquote>
+<p>You can install the development version of <code>cmplot</code> using:</p>
+<pre><code># install.packages(&quot;remotes&quot;)
+remotes::install_github(&quot;ahmadhusain/cmplot&quot;)
+</code></pre><pre><code>library(dplyr)
+library(caret)
+library(tidyr)
+library(ggplot2)
+library(plotly)
+library(cmplot)
+
+load(&quot;data-raw/churn_prediction.RData&quot;)
+</code></pre><p>Save the probability results from your model and actual data in the following format:</p>
+<pre><code>head(data_pkg)
+</code></pre><table>
+<thead>
+<tr>
+<th>probability</th>
+<th>churn_status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0.294</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>0.794</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>0.275</td>
+<td>No</td>
+</tr>
+<tr>
+<td>0.161</td>
+<td>No</td>
+</tr>
+<tr>
+<td>0.00769</td>
+<td>No</td>
+</tr>
+<tr>
+<td>0.555</td>
+<td>No</td>
+</tr>
+</tbody>
+</table>
+<pre><code>confmat_plot(data_pkg$probability, data_pkg$churn_status, &quot;Yes&quot;, &quot;No&quot;)
+</code></pre><p><img loading="lazy" src="/img/plotly.gif" alt=""  />
+</p>
 <h1 id="learn-r-data-visualization">Learn-R Data Visualization<a hidden class="anchor" aria-hidden="true" href="#learn-r-data-visualization">#</a></h1>
 <blockquote>
 <p>Apply sortable &amp; parsons to learnr tutorials <a href="https://ahmadhusain.shinyapps.io/learnr-dv/">https://ahmadhusain.shinyapps.io/learnr-dv/</a></p>
