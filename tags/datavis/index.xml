@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>datavis on Husain&#39;s Blog</title>
-    <link>http://example.org/tags/datavis/</link>
+    <link>https://ahmadhusain.github.io/tags/datavis/</link>
     <description>Recent content in datavis on Husain&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 15 Sep 2018 00:00:00 +0000</lastBuildDate><atom:link href="http://example.org/tags/datavis/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 15 Sep 2018 00:00:00 +0000</lastBuildDate><atom:link href="https://ahmadhusain.github.io/tags/datavis/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Reproduce Economist Plot</title>
-      <link>http://example.org/post/2018-09-15-reproduce-economist-plot/</link>
+      <link>https://ahmadhusain.github.io/post/2018-09-15-reproduce-economist-plot/</link>
       <pubDate>Sat, 15 Sep 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://example.org/post/2018-09-15-reproduce-economist-plot/</guid>
+      <guid>https://ahmadhusain.github.io/post/2018-09-15-reproduce-economist-plot/</guid>
       <description>Here is a tutorial how to replicate an economist publication plot using ggplot2. Please prepare the library required first and download the data on the link below to follow the code.
 link for download the report: https://www2.deloitte.com/content/dam/Deloitte/cr/Documents/public-sector/2014-Social-Progress-IndexRepIMP.pdf
 Load Librarylibrary(tidyverse)library(pdftools)library(ggthemes)library(ggpubr)library(tm)library(grid)library(ggrepel)library(scales)Import Datadatatext &amp;lt;- pdf_text(&amp;quot;data_input/2014-Social-Progress-IndexRepIMP.pdf&amp;quot;)Data Pre-Processingdatatext88 &amp;lt;- datatext[[88]] %&amp;gt;%read_lines()data1 &amp;lt;- datatext88[7:50]head(data1)#&amp;gt; [1] &amp;quot; 1 New Zealand $25,857 88.</description>

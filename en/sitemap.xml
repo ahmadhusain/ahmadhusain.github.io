@@ -2,112 +2,112 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>http://example.org/categories/</loc>
+    <loc>https://ahmadhusain.github.io/categories/</loc>
     <lastmod>2019-09-21T22:05:18+07:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="id"
-                href="http://example.org/id/categories/"
+                href="https://ahmadhusain.github.io/id/categories/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="http://example.org/categories/"
+                href="https://ahmadhusain.github.io/categories/"
                 />
   </url><url>
-    <loc>http://example.org/tags/classification/</loc>
+    <loc>https://ahmadhusain.github.io/tags/classification/</loc>
     <lastmod>2019-09-21T22:05:18+07:00</lastmod>
   </url><url>
-    <loc>http://example.org/tags/deep-learning/</loc>
+    <loc>https://ahmadhusain.github.io/tags/deep-learning/</loc>
     <lastmod>2019-09-21T22:05:18+07:00</lastmod>
   </url><url>
-    <loc>http://example.org/</loc>
+    <loc>https://ahmadhusain.github.io/</loc>
     <lastmod>2019-09-21T22:05:18+07:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="id"
-                href="http://example.org/id/"
+                href="https://ahmadhusain.github.io/id/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="http://example.org/"
+                href="https://ahmadhusain.github.io/"
                 />
   </url><url>
-    <loc>http://example.org/tags/lstm/</loc>
+    <loc>https://ahmadhusain.github.io/tags/lstm/</loc>
     <lastmod>2019-09-21T22:05:18+07:00</lastmod>
   </url><url>
-    <loc>http://example.org/tags/nlp/</loc>
+    <loc>https://ahmadhusain.github.io/tags/nlp/</loc>
     <lastmod>2019-09-21T22:05:18+07:00</lastmod>
   </url><url>
-    <loc>http://example.org/post/</loc>
+    <loc>https://ahmadhusain.github.io/post/</loc>
     <lastmod>2019-09-21T22:05:18+07:00</lastmod>
   </url><url>
-    <loc>http://example.org/categories/r/</loc>
+    <loc>https://ahmadhusain.github.io/categories/r/</loc>
     <lastmod>2019-09-21T22:05:18+07:00</lastmod>
   </url><url>
-    <loc>http://example.org/tags/supervised-learning/</loc>
+    <loc>https://ahmadhusain.github.io/tags/supervised-learning/</loc>
     <lastmod>2019-09-21T22:05:18+07:00</lastmod>
   </url><url>
-    <loc>http://example.org/tags/</loc>
+    <loc>https://ahmadhusain.github.io/tags/</loc>
     <lastmod>2019-09-21T22:05:18+07:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="id"
-                href="http://example.org/id/tags/"
+                href="https://ahmadhusain.github.io/id/tags/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="http://example.org/tags/"
+                href="https://ahmadhusain.github.io/tags/"
                 />
   </url><url>
-    <loc>http://example.org/post/text-lstm/</loc>
+    <loc>https://ahmadhusain.github.io/post/text-lstm/</loc>
     <lastmod>2019-09-21T22:05:18+07:00</lastmod>
   </url><url>
-    <loc>http://example.org/tags/datavis/</loc>
+    <loc>https://ahmadhusain.github.io/tags/datavis/</loc>
     <lastmod>2018-09-15T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://example.org/tags/ggplot2/</loc>
+    <loc>https://ahmadhusain.github.io/tags/ggplot2/</loc>
     <lastmod>2018-09-15T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://example.org/post/2018-09-15-reproduce-economist-plot/</loc>
+    <loc>https://ahmadhusain.github.io/post/2018-09-15-reproduce-economist-plot/</loc>
     <lastmod>2018-09-15T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://example.org/about/</loc>
+    <loc>https://ahmadhusain.github.io/about/</loc>
     <xhtml:link
                 rel="alternate"
                 hreflang="id"
-                href="http://example.org/id/about/"
+                href="https://ahmadhusain.github.io/id/about/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="http://example.org/about/"
+                href="https://ahmadhusain.github.io/about/"
                 />
   </url><url>
-    <loc>http://example.org/project/</loc>
+    <loc>https://ahmadhusain.github.io/project/</loc>
     <xhtml:link
                 rel="alternate"
                 hreflang="id"
-                href="http://example.org/id/project/"
+                href="https://ahmadhusain.github.io/id/project/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="http://example.org/project/"
+                href="https://ahmadhusain.github.io/project/"
                 />
   </url><url>
-    <loc>http://example.org/search/</loc>
+    <loc>https://ahmadhusain.github.io/search/</loc>
     <xhtml:link
                 rel="alternate"
                 hreflang="id"
-                href="http://example.org/id/search/"
+                href="https://ahmadhusain.github.io/id/search/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="http://example.org/search/"
+                href="https://ahmadhusain.github.io/search/"
                 />
   </url>
 </urlset>

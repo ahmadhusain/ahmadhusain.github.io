@@ -2,26 +2,26 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Husain&#39;s Blog</title>
-    <link>http://example.org/</link>
+    <link>https://ahmadhusain.github.io/</link>
     <description>Recent content on Husain&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 21 Sep 2018 00:00:00 +0000</lastBuildDate><atom:link href="http://example.org/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 21 Sep 2018 00:00:00 +0000</lastBuildDate><atom:link href="https://ahmadhusain.github.io/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Text Classification with LSTM</title>
-      <link>http://example.org/post/text-lstm/</link>
+      <link>https://ahmadhusain.github.io/post/text-lstm/</link>
       <pubDate>Fri, 21 Sep 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://example.org/post/text-lstm/</guid>
+      <guid>https://ahmadhusain.github.io/post/text-lstm/</guid>
       <description>Deep Neural NetworkBefore we further discuss the Long Short-Term Memory Model, we will first discuss the term of Deep learning where the main idea is on the Neural Network. So Neural Network is one branch of machine learning where the learning process imitates the way neurons in the human brain works. In Neural Network we know several terms, such as the input layer, hidden layer, and output layer. So the different betweetn Deep Learning and Neural Network architecture is the number of hidden layers specified.</description>
     </item>
     
     <item>
       <title>Reproduce Economist Plot</title>
-      <link>http://example.org/post/2018-09-15-reproduce-economist-plot/</link>
+      <link>https://ahmadhusain.github.io/post/2018-09-15-reproduce-economist-plot/</link>
       <pubDate>Sat, 15 Sep 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://example.org/post/2018-09-15-reproduce-economist-plot/</guid>
+      <guid>https://ahmadhusain.github.io/post/2018-09-15-reproduce-economist-plot/</guid>
       <description>Here is a tutorial how to replicate an economist publication plot using ggplot2. Please prepare the library required first and download the data on the link below to follow the code.
 link for download the report: https://www2.deloitte.com/content/dam/Deloitte/cr/Documents/public-sector/2014-Social-Progress-IndexRepIMP.pdf
 Load Librarylibrary(tidyverse)library(pdftools)library(ggthemes)library(ggpubr)library(tm)library(grid)library(ggrepel)library(scales)Import Datadatatext &amp;lt;- pdf_text(&amp;quot;data_input/2014-Social-Progress-IndexRepIMP.pdf&amp;quot;)Data Pre-Processingdatatext88 &amp;lt;- datatext[[88]] %&amp;gt;%read_lines()data1 &amp;lt;- datatext88[7:50]head(data1)#&amp;gt; [1] &amp;quot; 1 New Zealand $25,857 88.</description>
@@ -29,20 +29,20 @@ Load Librarylibrary(tidyverse)library(pdftools)library(ggthemes)library(ggpu
     
     <item>
       <title>About Me</title>
-      <link>http://example.org/about/</link>
+      <link>https://ahmadhusain.github.io/about/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://example.org/about/</guid>
+      <guid>https://ahmadhusain.github.io/about/</guid>
       <description>one of 5 holders of RStudio Trainer Certification in Indonesia.
  Experiences  Sr. Instructor at Algoritma Data Science Education Center  Sep, 2018 - Present   Laboratory Assistant at Islamic University of Indonesia  Exploratory Data Analysis Mar, 2018 - Aug, 2018   Lecture Assistant at Islamic University of Indonesia  Mar, 2018 - Aug, 2018   Analyst - Internship Program at PT. Astra International Tbk - AHM  Nov, 2017 - Dec, 2017   Biotech - Internship program at PT.</description>
     </item>
     
     <item>
       <title>Projects</title>
-      <link>http://example.org/project/</link>
+      <link>https://ahmadhusain.github.io/project/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://example.org/project/</guid>
+      <guid>https://ahmadhusain.github.io/project/</guid>
       <description>C19-Dashboard  COVID-19 Dashboard Monitoring https://ahmadhusain.shinyapps.io/covid19-dashboard/
  Dashboard monitor pandemic situation globally and in Indonesia. Built using Shiny and Shinydashboard in R. This project aims to provide the information visually the total number of confirmed cases, recovered, and death. The data will be updated automatically every hour.
 Image-Classification with Random Forest an example script if you want to do image-classification stuff with Random Forest. The datasets are available at Malaria Dataset cell_images.</description>
