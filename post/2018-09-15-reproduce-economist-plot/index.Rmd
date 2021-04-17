@@ -1,0 +1,286 @@
+---
+title: Reproduce Economist Plot
+author: Ahmad Husain
+date: '2018-09-15'
+categories:
+  - R
+tags:
+  - ggplot2
+  - datavis
+cover:
+    image: /img/economist-plot.png
+    # can also paste direct link from external site
+    # ex. https://i.ibb.co/K0HVPBd/paper-mod-profilemode.png
+    alt: "<alt text>"
+    caption: "<text>"
+    relative: false # To use relative path for cover image, used in hugo Page-bundles
+---
+
+```{r setup, include=FALSE}
+# clean up the environment
+rm(list = ls())
+
+# setup chunk options
+knitr::opts_chunk$set(
+  message = FALSE,
+  warning = FALSE,
+  fig.align = "center",
+  comment = "#>"
+)
+```
+
+Here is a tutorial how to replicate an economist publication plot using ggplot2. Please prepare the library required first and download the data on the link below to follow the code.
+
+link for download the report:  https://www2.deloitte.com/content/dam/Deloitte/cr/Documents/public-sector/2014-Social-Progress-IndexRepIMP.pdf
+
+# Load Library
+
+```{r}
+library(tidyverse)
+library(pdftools)
+library(ggthemes)
+library(ggpubr)
+library(tm)
+library(grid)
+library(ggrepel)
+library(scales)
+```
+
+# Import Data
+
+
+
+```{r}
+datatext <- pdf_text("data_input/2014-Social-Progress-IndexRepIMP.pdf")
+```
+
+# Data Pre-Processing
+
+```{r}
+datatext88 <- datatext[[88]] %>%
+              read_lines()
+```
+
+```{r}
+data1 <- datatext88[7:50]
+head(data1)
+```
+
+```{r}
+all_data1_lines <- data1[1:44] %>%
+  str_squish() %>%
+  str_replace_all(",", "")
+head(all_data1_lines)
+```
+
+```{r}
+all_data1_lines_sub <- data1[-c(1, 13, 16, 23,25,28,37)] %>%
+  str_squish() %>%
+  str_replace_all(",", "") %>%
+  strsplit(split = " ")
+head(all_data1_lines_sub)
+```
+
+```{r}
+datadf88_sub <- plyr::ldply(all_data1_lines_sub) %>%
+  select(c(V2,V3,V4)) %>%
+  rename(Country = V2,
+         GDP = V3,
+         SPI = V4)
+datadf88_sub_2 <- data1[c(1,13,16,23,25)] %>%
+  str_squish() %>%
+  str_replace_all(",", "") %>%
+  strsplit(split = " ") %>%
+  plyr::ldply() %>%
+  mutate(V2 = paste(V2,V3)) %>%
+  select(c(V2,V4,V5)) %>%
+  rename(Country = V2,
+         GDP = V4,
+         SPI = V5)
+datadf88_sub_3 <- data1[c(28,37)] %>%
+  str_squish() %>%
+  str_replace_all(",", "") %>%
+  strsplit(split = " ") %>%
+  plyr::ldply() %>%
+  mutate(V2 = paste(V2,V3,V4)) %>%
+  select(c(V2,V5,V6)) %>%
+  rename(Country = V2,
+         GDP = V5,
+         SPI = V6)
+df88 <- rbind(datadf88_sub,datadf88_sub_2,datadf88_sub_3)
+df88$GDP <- str_remove(df88$GDP, "[$]")
+df88 <- df88 %>%
+  mutate(GDP = as.numeric(GDP),
+         SPI = as.numeric(SPI))
+
+#Next page
+datatext90 <- datatext[[90]] %>%
+  read_lines()
+data2 <- datatext90[7:50]
+all_data2_lines <- data2[1:44] %>%
+  str_squish() %>%
+  str_replace_all(",", "")
+all_data2_lines_sub <- data2[-c(3, 17, 19, 21, 24, 25, 41)] %>%
+  str_squish() %>%
+  str_replace_all(",", "") %>%
+  strsplit(split = " ")
+datadf90_sub <- plyr::ldply(all_data2_lines_sub) %>%
+  select(c(V2,V3,V4)) %>%
+  rename(Country = V2,
+         GDP = V3,
+         SPI = V4)
+datadf90_sub_2 <- data2[c(19, 21, 24, 25, 41)] %>%
+  str_squish() %>%
+  str_replace_all(",", "") %>%
+  strsplit(split = " ") %>%
+  plyr::ldply() %>%
+  mutate(V2 = paste(V2,V3)) %>%
+  select(c(V2,V4,V5)) %>%
+  rename(Country = V2,
+         GDP = V4,
+         SPI = V5)
+datadf90_sub_3 <- data2[c(3,17)] %>%
+  str_squish() %>%
+  str_replace_all(",", "") %>%
+  strsplit(split = " ") %>%
+  plyr::ldply() %>%
+  mutate(V2 = paste(V2,V3,V4)) %>%
+  select(c(V2,V5,V6)) %>%
+  rename(Country = V2,
+         GDP = V5,
+         SPI = V6)
+df90 <- rbind(datadf90_sub,datadf90_sub_2,datadf90_sub_3)
+df90$GDP <- str_remove(df90$GDP, "[$]")
+df90 <- df90 %>%
+  mutate(GDP = as.numeric(GDP),
+         SPI = as.numeric(SPI))
+
+#The last Page
+datatext92 <- datatext[[92]] %>%
+  read_lines()
+data3 <- datatext92[7:50]
+all_data3_lines <- data3[1:44] %>%
+  str_squish() %>%
+  str_replace_all(",", "")
+all_data3_lines_sub <- data3[-c(22, 24, 43)] %>%
+  str_squish() %>%
+  str_replace_all(",", "") %>%
+  strsplit(split = " ")
+datadf92_sub <- plyr::ldply(all_data3_lines_sub) %>%
+  select(c(V2,V3,V4)) %>%
+  rename(Country = V2,
+         GDP = V3,
+         SPI = V4)
+datadf92_sub_2 <- data3[24] %>%
+  str_squish() %>%
+  str_replace_all(",", "") %>%
+  strsplit(split = " ") %>%
+  plyr::ldply() %>%
+  mutate(V2 = paste(V2,V3)) %>%
+  select(c(V2,V4,V5)) %>%
+  rename(Country = V2,
+         GDP = V4,
+         SPI = V5)
+datadf92_sub_3 <- data3[c(22,43)] %>%
+  str_squish() %>%
+  str_replace_all(",", "") %>%
+  strsplit(split = " ") %>%
+  plyr::ldply() %>%
+  mutate(V2 = paste(V2,V3,V4)) %>%
+  select(c(V2,V5,V6)) %>%
+  rename(Country = V2,
+         GDP = V5,
+         SPI = V6)
+df92 <- rbind(datadf92_sub,datadf92_sub_2,datadf92_sub_3)
+df92$GDP <- str_remove(df92$GDP, "[$]")
+df92 <- df92 %>%
+  mutate(GDP = as.numeric(GDP),
+         SPI = as.numeric(SPI))
+```
+
+```{r}
+#combine all data
+data <- rbind(df88, df90, df92)
+data <- data %>% arrange(desc(SPI)) %>%
+                 mutate(Country = ifelse(Country == "United Kingdom", "Britain", Country)) %>%
+                 mutate(Col_Country = ifelse(Country == "Costa Rica" | Country == "Brazil" | Country == "China" | 
+                                Country == "Chad" | Country == "Angola" | Country == "India" |
+                                Country == "Iran" | Country == "Philippines" | Country == "Jamaica" | 
+                                Country == "Russia" | Country == "Greece"| Country == "Italy" | 
+                                Country == "Israel" | Country == "Saudi Arabia" | Country == "France" |
+                                Country == "Korea" | Country == "Japan" | Country == "Britain" | Country == "Germany" |
+                                Country == "Canada" | Country == "United Arab Emirates" | Country == "Kuwait" |
+                                Country == "Switzerland" | Country =="Norway"| Country == "United States", 
+                                "navy","blue")) %>%
+  mutate(Col_Country = as.factor(Col_Country))
+```
+
+# Create Plot
+
+```{r}
+p <- ggplot(data, aes(x=GDP,y=SPI)) 
+p
+```
+
+```{r}
+p2 <- p + theme_hc() +
+  geom_point(colour="black", size = 2.7, pch=21, aes(fill=Col_Country)) +
+  scale_fill_manual(values = c("#86d7f2","#00485d"), labels = NULL)
+p2
+```
+
+```{r}
+p3 <- p2 + geom_smooth(method = "loess",
+              span = 1.7,
+              formula = y~x,
+              se = FALSE,
+              color = "#bf1912", size = 1.5)
+p3
+```
+
+```{r}
+p4 <-  p3 + labs(title="Measuring development",
+       subtitle="Social progress index and GDP per person",
+       y="Social progress index, 2014",
+       x="GDP per person, 2012, $ at PPP*",
+       caption="*Purchasing-Power Parity, 2005 prices") +
+  scale_y_continuous(breaks =seq(20,90,10), limits = c(20,90)) +
+  scale_x_continuous(breaks = seq(0,50000,10000) , limits = c(0,50000), labels = comma) +
+  theme(plot.title = element_text(size = 11, face = "bold", hjust = 0.0, color = "black"),
+         plot.subtitle = element_text(size = 9, hjust = 0.0, color = "black"),
+         plot.caption = element_text(size = 8, color = "black"),
+         legend.position = "none",
+         axis.title = element_text(size = 8, face = "italic"))
+p4
+```
+
+```{r}
+labelpoin <- c("Costa Rica","Brazil","China","Chad","Angola",
+               "India","Iran","Philippines","Jamaica","Russia", 
+               "Greece","Italy","Israel","Saudi Arabia","France",
+               "Korea","Japan","Britain","Germany","Canada","United Arab Emirates",
+               "Kuwait","Switzerland","Norway","United States")
+set.seed(2012)
+p5 <- p4 + geom_text_repel(aes(label = Country),
+              color = "black", 
+              data = subset(data, Country %in% labelpoin),
+              force = 30)
+p5
+```
+
+```{r}
+# add multiple caption
+p6 <- ggplotGrob(p5)
+k <- which(p6$layout$name=="caption")
+grbTxt <- p6$grobs[[k]]$children[[1]]
+
+grbTxt$label <- "Source: Social Progress Imperative"
+grbTxt$name <- "GRID.text.left"
+grbTxt$x <- unit(0,"npc")
+grbTxt$hjust <- 0
+grbTxt$gp$col <- "black"
+
+p6$grobs[[k]] <- addGrob(p6$grobs[[k]],grbTxt)
+grid.draw(p6)
+```
+

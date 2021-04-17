@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Blognya Husain</title>
+    <link>http://example.org/id/</link>
+    <description>Recent content on Blognya Husain</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language><atom:link href="http://example.org/id/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Projects</title>
+      <link>http://example.org/id/project/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/id/project/</guid>
+      <description>C19-Dashboard  Dasbor monitoring COVID-19 https://ahmadhusain.shinyapps.io/covid19-dashboard/
+ Dasbor untuk monitoring situasi pandemi secara global maupun di Indonesia. Dibuat menggunakan Shiny dan Shinydashboard di R. Proyek ini bertujuan untuk menyediakan informasi secara visual untuk jumlah kasus yang terkonfirmasi, sembuh, dan meninggal. Data akan diupdate secara otomatis tiap jamnya.
+Dasbor klasifikasi gambar  Klasifikasi gambar menggunakan algoritma Random Forest https://ahmadhusain.shinyapps.io/image-class-rf/
+ Sebuah contoh script jika anda ingin melakukan tugas klasifikasi gambar menggunakan Random Forest.</description>
+    </item>
+    
+    
+    <item>
+      <title>Tentang saya</title>
+      <link>http://example.org/id/about/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/id/about/</guid>
+      <description>one of 5 holders of RStudio Trainer Certification in Indonesia.
+ Pengalaman  Instructur Senior Algoritma Data Science Education Center  Sep, 2018 - Sekarang   Asistan Labotarorium di Islamic University of Indonesia  Exploratory Data Analysis Mar, 2018 - Aug, 2018   Asisten Dosen di Islamic University of Indonesia  Mar, 2018 - Aug, 2018   Analyst - Internship Program at PT. Astra International Tbk - AHM  Nov, 2017 - Dec, 2017   Biotech - Internship program at PT.</description>
+    </item>
+    
+  </channel>
+</rss>

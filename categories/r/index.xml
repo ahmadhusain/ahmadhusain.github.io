@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>R on Husain&#39;s Blog</title>
+    <link>http://example.org/categories/r/</link>
+    <description>Recent content in R on Husain&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 21 Sep 2018 00:00:00 +0000</lastBuildDate><atom:link href="http://example.org/categories/r/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Text Classification with LSTM</title>
+      <link>http://example.org/post/text-lstm/</link>
+      <pubDate>Fri, 21 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/post/text-lstm/</guid>
+      <description>Deep Neural NetworkBefore we further discuss the Long Short-Term Memory Model, we will first discuss the term of Deep learning where the main idea is on the Neural Network. So Neural Network is one branch of machine learning where the learning process imitates the way neurons in the human brain works. In Neural Network we know several terms, such as the input layer, hidden layer, and output layer. So the different betweetn Deep Learning and Neural Network architecture is the number of hidden layers specified.</description>
+    </item>
+    
+    <item>
+      <title>Reproduce Economist Plot</title>
+      <link>http://example.org/post/2018-09-15-reproduce-economist-plot/</link>
+      <pubDate>Sat, 15 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/post/2018-09-15-reproduce-economist-plot/</guid>
+      <description>Here is a tutorial how to replicate an economist publication plot using ggplot2. Please prepare the library required first and download the data on the link below to follow the code.
+link for download the report: https://www2.deloitte.com/content/dam/Deloitte/cr/Documents/public-sector/2014-Social-Progress-IndexRepIMP.pdf
+Load Librarylibrary(tidyverse)library(pdftools)library(ggthemes)library(ggpubr)library(tm)library(grid)library(ggrepel)library(scales)Import Datadatatext &amp;lt;- pdf_text(&amp;quot;data_input/2014-Social-Progress-IndexRepIMP.pdf&amp;quot;)Data Pre-Processingdatatext88 &amp;lt;- datatext[[88]] %&amp;gt;%read_lines()data1 &amp;lt;- datatext88[7:50]head(data1)#&amp;gt; [1] &amp;quot; 1 New Zealand $25,857 88.</description>
+    </item>
+    
+  </channel>
+</rss>
