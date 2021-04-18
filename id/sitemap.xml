@@ -2,76 +2,76 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://ahmadhusain.github.io/id/</loc>
+    <loc>http://ahmadhusain.in/id/</loc>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="https://ahmadhusain.github.io/"
+                href="http://ahmadhusain.in/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="id"
-                href="https://ahmadhusain.github.io/id/"
+                href="http://ahmadhusain.in/id/"
                 />
   </url><url>
-    <loc>https://ahmadhusain.github.io/id/categories/</loc>
+    <loc>http://ahmadhusain.in/id/categories/</loc>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="https://ahmadhusain.github.io/categories/"
+                href="http://ahmadhusain.in/categories/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="id"
-                href="https://ahmadhusain.github.io/id/categories/"
+                href="http://ahmadhusain.in/id/categories/"
                 />
   </url><url>
-    <loc>https://ahmadhusain.github.io/id/project/</loc>
+    <loc>http://ahmadhusain.in/id/project/</loc>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="https://ahmadhusain.github.io/project/"
+                href="http://ahmadhusain.in/project/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="id"
-                href="https://ahmadhusain.github.io/id/project/"
+                href="http://ahmadhusain.in/id/project/"
                 />
   </url><url>
-    <loc>https://ahmadhusain.github.io/id/search/</loc>
+    <loc>http://ahmadhusain.in/id/search/</loc>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="https://ahmadhusain.github.io/search/"
+                href="http://ahmadhusain.in/search/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="id"
-                href="https://ahmadhusain.github.io/id/search/"
+                href="http://ahmadhusain.in/id/search/"
                 />
   </url><url>
-    <loc>https://ahmadhusain.github.io/id/tags/</loc>
+    <loc>http://ahmadhusain.in/id/tags/</loc>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="https://ahmadhusain.github.io/tags/"
+                href="http://ahmadhusain.in/tags/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="id"
-                href="https://ahmadhusain.github.io/id/tags/"
+                href="http://ahmadhusain.in/id/tags/"
                 />
   </url><url>
-    <loc>https://ahmadhusain.github.io/id/about/</loc>
+    <loc>http://ahmadhusain.in/id/about/</loc>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="https://ahmadhusain.github.io/about/"
+                href="http://ahmadhusain.in/about/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="id"
-                href="https://ahmadhusain.github.io/id/about/"
+                href="http://ahmadhusain.in/id/about/"
                 />
   </url>
 </urlset>

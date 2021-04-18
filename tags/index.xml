@@ -2,71 +2,71 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on Husain&#39;s Blog</title>
-    <link>https://ahmadhusain.github.io/tags/</link>
+    <link>http://ahmadhusain.in/tags/</link>
     <description>Recent content in Tags on Husain&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 21 Sep 2018 00:00:00 +0000</lastBuildDate><atom:link href="https://ahmadhusain.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 21 Sep 2018 00:00:00 +0000</lastBuildDate><atom:link href="http://ahmadhusain.in/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Classification</title>
-      <link>https://ahmadhusain.github.io/tags/classification/</link>
+      <link>http://ahmadhusain.in/tags/classification/</link>
       <pubDate>Fri, 21 Sep 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://ahmadhusain.github.io/tags/classification/</guid>
+      <guid>http://ahmadhusain.in/tags/classification/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Deep Learning</title>
-      <link>https://ahmadhusain.github.io/tags/deep-learning/</link>
+      <link>http://ahmadhusain.in/tags/deep-learning/</link>
       <pubDate>Fri, 21 Sep 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://ahmadhusain.github.io/tags/deep-learning/</guid>
+      <guid>http://ahmadhusain.in/tags/deep-learning/</guid>
       <description></description>
     </item>
     
     <item>
       <title>LSTM</title>
-      <link>https://ahmadhusain.github.io/tags/lstm/</link>
+      <link>http://ahmadhusain.in/tags/lstm/</link>
       <pubDate>Fri, 21 Sep 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://ahmadhusain.github.io/tags/lstm/</guid>
+      <guid>http://ahmadhusain.in/tags/lstm/</guid>
       <description></description>
     </item>
     
     <item>
       <title>NLP</title>
-      <link>https://ahmadhusain.github.io/tags/nlp/</link>
+      <link>http://ahmadhusain.in/tags/nlp/</link>
       <pubDate>Fri, 21 Sep 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://ahmadhusain.github.io/tags/nlp/</guid>
+      <guid>http://ahmadhusain.in/tags/nlp/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Supervised Learning</title>
-      <link>https://ahmadhusain.github.io/tags/supervised-learning/</link>
+      <link>http://ahmadhusain.in/tags/supervised-learning/</link>
       <pubDate>Fri, 21 Sep 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://ahmadhusain.github.io/tags/supervised-learning/</guid>
+      <guid>http://ahmadhusain.in/tags/supervised-learning/</guid>
       <description></description>
     </item>
     
     <item>
       <title>datavis</title>
-      <link>https://ahmadhusain.github.io/tags/datavis/</link>
+      <link>http://ahmadhusain.in/tags/datavis/</link>
       <pubDate>Sat, 15 Sep 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://ahmadhusain.github.io/tags/datavis/</guid>
+      <guid>http://ahmadhusain.in/tags/datavis/</guid>
       <description></description>
     </item>
     
     <item>
       <title>ggplot2</title>
-      <link>https://ahmadhusain.github.io/tags/ggplot2/</link>
+      <link>http://ahmadhusain.in/tags/ggplot2/</link>
       <pubDate>Sat, 15 Sep 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://ahmadhusain.github.io/tags/ggplot2/</guid>
+      <guid>http://ahmadhusain.in/tags/ggplot2/</guid>
       <description></description>
     </item>
     

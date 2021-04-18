@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Categories on Husain&#39;s Blog</title>
-    <link>https://ahmadhusain.github.io/categories/</link>
+    <link>http://ahmadhusain.in/categories/</link>
     <description>Recent content in Categories on Husain&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 21 Sep 2018 00:00:00 +0000</lastBuildDate><atom:link href="https://ahmadhusain.github.io/categories/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 21 Sep 2018 00:00:00 +0000</lastBuildDate><atom:link href="http://ahmadhusain.in/categories/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>R</title>
-      <link>https://ahmadhusain.github.io/categories/r/</link>
+      <link>http://ahmadhusain.in/categories/r/</link>
       <pubDate>Fri, 21 Sep 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://ahmadhusain.github.io/categories/r/</guid>
+      <guid>http://ahmadhusain.in/categories/r/</guid>
       <description></description>
     </item>
     

@@ -2,112 +2,112 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://ahmadhusain.github.io/categories/</loc>
+    <loc>http://ahmadhusain.in/categories/</loc>
     <lastmod>2019-09-21T22:05:18+07:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="id"
-                href="https://ahmadhusain.github.io/id/categories/"
+                href="http://ahmadhusain.in/id/categories/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="https://ahmadhusain.github.io/categories/"
+                href="http://ahmadhusain.in/categories/"
                 />
   </url><url>
-    <loc>https://ahmadhusain.github.io/tags/classification/</loc>
+    <loc>http://ahmadhusain.in/tags/classification/</loc>
     <lastmod>2019-09-21T22:05:18+07:00</lastmod>
   </url><url>
-    <loc>https://ahmadhusain.github.io/tags/deep-learning/</loc>
+    <loc>http://ahmadhusain.in/tags/deep-learning/</loc>
     <lastmod>2019-09-21T22:05:18+07:00</lastmod>
   </url><url>
-    <loc>https://ahmadhusain.github.io/</loc>
+    <loc>http://ahmadhusain.in/</loc>
     <lastmod>2019-09-21T22:05:18+07:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="id"
-                href="https://ahmadhusain.github.io/id/"
+                href="http://ahmadhusain.in/id/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="https://ahmadhusain.github.io/"
+                href="http://ahmadhusain.in/"
                 />
   </url><url>
-    <loc>https://ahmadhusain.github.io/tags/lstm/</loc>
+    <loc>http://ahmadhusain.in/tags/lstm/</loc>
     <lastmod>2019-09-21T22:05:18+07:00</lastmod>
   </url><url>
-    <loc>https://ahmadhusain.github.io/tags/nlp/</loc>
+    <loc>http://ahmadhusain.in/tags/nlp/</loc>
     <lastmod>2019-09-21T22:05:18+07:00</lastmod>
   </url><url>
-    <loc>https://ahmadhusain.github.io/post/</loc>
+    <loc>http://ahmadhusain.in/post/</loc>
     <lastmod>2019-09-21T22:05:18+07:00</lastmod>
   </url><url>
-    <loc>https://ahmadhusain.github.io/categories/r/</loc>
+    <loc>http://ahmadhusain.in/categories/r/</loc>
     <lastmod>2019-09-21T22:05:18+07:00</lastmod>
   </url><url>
-    <loc>https://ahmadhusain.github.io/tags/supervised-learning/</loc>
+    <loc>http://ahmadhusain.in/tags/supervised-learning/</loc>
     <lastmod>2019-09-21T22:05:18+07:00</lastmod>
   </url><url>
-    <loc>https://ahmadhusain.github.io/tags/</loc>
+    <loc>http://ahmadhusain.in/tags/</loc>
     <lastmod>2019-09-21T22:05:18+07:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="id"
-                href="https://ahmadhusain.github.io/id/tags/"
+                href="http://ahmadhusain.in/id/tags/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="https://ahmadhusain.github.io/tags/"
+                href="http://ahmadhusain.in/tags/"
                 />
   </url><url>
-    <loc>https://ahmadhusain.github.io/post/text-lstm/</loc>
+    <loc>http://ahmadhusain.in/post/text-lstm/</loc>
     <lastmod>2019-09-21T22:05:18+07:00</lastmod>
   </url><url>
-    <loc>https://ahmadhusain.github.io/tags/datavis/</loc>
+    <loc>http://ahmadhusain.in/tags/datavis/</loc>
     <lastmod>2018-09-15T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://ahmadhusain.github.io/tags/ggplot2/</loc>
+    <loc>http://ahmadhusain.in/tags/ggplot2/</loc>
     <lastmod>2018-09-15T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://ahmadhusain.github.io/post/2018-09-15-reproduce-economist-plot/</loc>
+    <loc>http://ahmadhusain.in/post/2018-09-15-reproduce-economist-plot/</loc>
     <lastmod>2018-09-15T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://ahmadhusain.github.io/about/</loc>
+    <loc>http://ahmadhusain.in/about/</loc>
     <xhtml:link
                 rel="alternate"
                 hreflang="id"
-                href="https://ahmadhusain.github.io/id/about/"
+                href="http://ahmadhusain.in/id/about/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="https://ahmadhusain.github.io/about/"
+                href="http://ahmadhusain.in/about/"
                 />
   </url><url>
-    <loc>https://ahmadhusain.github.io/project/</loc>
+    <loc>http://ahmadhusain.in/project/</loc>
     <xhtml:link
                 rel="alternate"
                 hreflang="id"
-                href="https://ahmadhusain.github.io/id/project/"
+                href="http://ahmadhusain.in/id/project/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="https://ahmadhusain.github.io/project/"
+                href="http://ahmadhusain.in/project/"
                 />
   </url><url>
-    <loc>https://ahmadhusain.github.io/search/</loc>
+    <loc>http://ahmadhusain.in/search/</loc>
     <xhtml:link
                 rel="alternate"
                 hreflang="id"
-                href="https://ahmadhusain.github.io/id/search/"
+                href="http://ahmadhusain.in/id/search/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="https://ahmadhusain.github.io/search/"
+                href="http://ahmadhusain.in/search/"
                 />
   </url>
 </urlset>
