@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Bioinformatics on Husain&#39;s Blog</title>
+    <link>http://ahmadhusain.in/tags/bioinformatics/</link>
+    <description>Recent content in Bioinformatics on Husain&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 25 Aug 2018 00:00:00 +0000</lastBuildDate><atom:link href="http://ahmadhusain.in/tags/bioinformatics/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Quantitative Trait Loci (QTL) Mapping</title>
+      <link>http://ahmadhusain.in/post/qtl-mapping/</link>
+      <pubDate>Sat, 25 Aug 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://ahmadhusain.in/post/qtl-mapping/</guid>
+      <description>BackgroundFood security is one of the main priorities in the National Development Plan. The availability of strategic food is highly relied as an effort to achieve food security. Strategic food can be defined as a food commodity that is related to the needs of most people. One example of a strategic food commodity according to the Indonesian Ministry of Agriculture is chili/pepper. Most of the time the farmers experience crop failure due to bacterial and fungal disease attacks on the roots and leaves.</description>
+    </item>
+    
+  </channel>
+</rss>

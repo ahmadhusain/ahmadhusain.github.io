@@ -6,14 +6,24 @@
     <description>Recent content in Posts on Husain&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 21 Sep 2018 00:00:00 +0000</lastBuildDate><atom:link href="http://ahmadhusain.in/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 24 Apr 2020 00:00:00 +0000</lastBuildDate><atom:link href="http://ahmadhusain.in/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Causal Impact on Leads Generation</title>
+      <link>http://ahmadhusain.in/post/causal-impact/</link>
+      <pubDate>Fri, 24 Apr 2020 00:00:00 +0000</pubDate>
+      
+      <guid>http://ahmadhusain.in/post/causal-impact/</guid>
+      <description>BackgroundIn the business process, the marketing team has a role to play in increasing the brand awareness of a product. When the marketing team’s efforts are successful to get the customer’s attention to find out the product, it will generate a lead. In a simple way, leads are people who are interested in a business product.
+In the digital era, leads can be interpreted as people who visit websites directly or through advertisements, people who like, share content or product campaigns.</description>
+    </item>
+    
     <item>
       <title>Text Classification with LSTM</title>
-      <link>http://ahmadhusain.in/post/text-lstm/</link>
+      <link>http://ahmadhusain.in/post/2018-09-21-text-classification-with-lstm/</link>
       <pubDate>Fri, 21 Sep 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://ahmadhusain.in/post/text-lstm/</guid>
-      <description>Deep Neural NetworkBefore we further discuss the Long Short-Term Memory Model, we will first discuss the term of Deep learning where the main idea is on the Neural Network. So Neural Network is one branch of machine learning where the learning process imitates the way neurons in the human brain works. In Neural Network we know several terms, such as the input layer, hidden layer, and output layer. So the different betweetn Deep Learning and Neural Network architecture is the number of hidden layers specified.</description>
+      <guid>http://ahmadhusain.in/post/2018-09-21-text-classification-with-lstm/</guid>
+      <description>Deep Neural NetworkBefore we further discuss the Long Short-Term Memory Model, we will first discuss the term of Deep learning where the main idea is on the Neural Network. So Neural Network is one branch of machine learning where the learning process imitates the way neurons in the human brain works. In Neural Network we know several terms, such as the input layer, hidden layer, and output layer.</description>
     </item>
     
     <item>
@@ -25,6 +35,15 @@
       <description>Here is a tutorial how to replicate an economist publication plot using ggplot2. Please prepare the library required first and download the data on the link below to follow the code.
 link for download the report: https://www2.deloitte.com/content/dam/Deloitte/cr/Documents/public-sector/2014-Social-Progress-IndexRepIMP.pdf
 Load Librarylibrary(tidyverse)library(pdftools)library(ggthemes)library(ggpubr)library(tm)library(grid)library(ggrepel)library(scales)Import Datadatatext &amp;lt;- pdf_text(&amp;quot;data_input/2014-Social-Progress-IndexRepIMP.pdf&amp;quot;)Data Pre-Processingdatatext88 &amp;lt;- datatext[[88]] %&amp;gt;%read_lines()data1 &amp;lt;- datatext88[7:50]head(data1)#&amp;gt; [1] &amp;quot; 1 New Zealand $25,857 88.</description>
+    </item>
+    
+    <item>
+      <title>Quantitative Trait Loci (QTL) Mapping</title>
+      <link>http://ahmadhusain.in/post/qtl-mapping/</link>
+      <pubDate>Sat, 25 Aug 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://ahmadhusain.in/post/qtl-mapping/</guid>
+      <description>BackgroundFood security is one of the main priorities in the National Development Plan. The availability of strategic food is highly relied as an effort to achieve food security. Strategic food can be defined as a food commodity that is related to the needs of most people. One example of a strategic food commodity according to the Indonesian Ministry of Agriculture is chili/pepper. Most of the time the farmers experience crop failure due to bacterial and fungal disease attacks on the roots and leaves.</description>
     </item>
     
   </channel>

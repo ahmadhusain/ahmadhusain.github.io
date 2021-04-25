@@ -1,0 +1,236 @@
+---
+title: Quantitative Trait Loci (QTL) Mapping
+author: Ahmad Husain Abdullah
+date: '2018-08-25'
+slug: qtl-mapping
+categories:
+  - R
+tags:
+  - Bioinformatics
+cover:
+    image: /img/pepper.png
+---
+
+# Background
+
+Food security is one of the main priorities in the National Development Plan. The availability of strategic food is highly relied as an effort to achieve food security. Strategic food can be defined as a food commodity that is related to the needs of most people. One example of a strategic food commodity according to the Indonesian Ministry of Agriculture is chili/pepper. Most of the time the farmers experience crop failure due to bacterial and fungal disease attacks on the roots and leaves. One of the dominant diseases that attack pepper plants is the fungus *Phytophthora capsici*.
+
+It is necessary to conduct a study to determine the location of the genes that affect the susceptibility of *Phytophthora capsici*. Several research results have proven that the *Quantitative Trait Locus* analysis is successful in identifying traits in plants. Therefore, as a study material for improving the quality of pepper plants, using the available DNA sequence data, using the QTL method approach, we will identify the location of the genes that are significantly associated with *Phytophthora capsici disease*.
+
+# Quantitative Trait Loci
+
+In a nutshell, the QTL is an individual chromosome locus where there are genes responsible for variations in a trait such as large fruit, sweet taste, level of spiciness, curly hair etc. Most of the quantitative traits in individuals are controlled by a number of genes.
+
+To find out complex genetic trait, firstly we need to utilize the wide genetic diversity of the observed individuals by looking at the genetic linkage map. High density genetic linkage maps (centiMorgan) serve as marker-based selection to speed up breeding programs and to detect characterization of loci controlling for individual quantitative traits.
+
+# Modelling
+
+```{r setup, include=FALSE}
+# clean up the environment
+rm(list = ls())
+
+# setup chunk options
+knitr::opts_chunk$set(
+  message = FALSE,
+  warning = FALSE,
+  fig.align = "center",
+  comment = "#>"
+)
+```
+
+```{r}
+library(ASMap)
+library(qtlcharts)
+library(qtl)
+library(ggplot2)
+library(ggpubr)
+library(ggdendro)
+library(factoextra)
+library(car)
+library(car)
+library(dplyr)
+```
+
+```{r}
+data <- read.cross(
+  format = "csv", 
+  file ="http://bit.ly/dataqtl", 
+  sep = ";", 
+  genotypes = c("a","h","b"),
+  alleles = c("a","b")
+)
+```
+
+`read.cross()` is a function to read QTL data. `genotypes` defines a vector or string of genetic code. Based on data, code "a" means homozygous dominant (resistant to the viruses), code "h" for homozygous recessive (susceptible to the viruses).
+
+
+```{r}
+summary(data)
+```
+
+The phenotype data describes the scoring of the resistance of pepper plants to the virus. The scores made are in the range of 0 to 5. Pepper plants that are resistant to virus will be given a score of 0. While those that are very susceptible will be given a score of 5.
+
+## QTL Mapping
+
+Interval Mapping is a popular approach to QTL analysis. Each sequence marker will be calculated with Logarithm of the Odds (LOD) value. LOD score is a statistical value used in genetic data to measure whether the 2 or more genes being observed tend to be located close to each other or not. A LOD score of 3 or more generally means that the 2 genes are located close together on the chromosome.
+
+The simplest method in QTL mapping analysis is Marker Regression or commonly known as Analysis of Variance (ANAVA). But there are three drawbacks Marker Regression method for QTL mapping. First, it cannot differentiate between the predicted location of QTL and the influence of QTL. The location of the QTL is estimated only by looking at the markers with the largest LOD score, not by testing the hypothesis. The second, it cannot be recommended when there is missing in the markers data. And the last, when the markers are far apart, it will imply weakening of the evidence to detect QTL.
+
+Interval mapping is used as a solution to the three problems found in the analysis of variance or Marker Regression. Interval mapping is currently the most popular approach to QTL mapping. In interval mapping, each locus marker is considered one by one and then the LOD score is calculated to determine the actual QTL locus model made.
+ 
+```{r}
+# Marker regression method
+
+data_mr <- data %>% 
+  est.rf(maxit = 200, tol = 1e-8) %>% 
+  scanone(method = "mr")
+
+# Harley-Knott Regression
+
+data_hk <- data %>% 
+  est.rf(maxit = 200, tol = 1e-8) %>% 
+  calc.genoprob(step = 1, error.prob = 0.001, map.function = "haldane") %>% 
+  scanone(method = "hk")
+
+# Multiple Imputation
+
+set.seed(120)
+
+data_imp <- data %>% 
+  est.rf(maxit = 200, tol = 1e-8) %>% 
+  sim.geno(step = 1, error.prob = 0.001) %>% 
+  scanone(method = "imp")
+
+```
+
+```{r}
+data_mr %>% 
+  arrange(desc(lod)) %>% 
+  head()
+```
+
+When executed, it will produce a data object with 2 classes, namely `scanone` and `dataframe`. The data frame consists of four columns of information name of marker, location of the chromosomes, position of the genetic map (cM), and LOD score using each method. For instance, we print the `data_mr` and Marka MCA32 obtained the highest LOD score compared to the others around to 8,592.
+
+```{r}
+plot(
+  data_imp,
+  data_hk,
+  data_mr,
+  ylab = "LOD Score",
+  lty = c(1, 1, 2),
+  col = c("black", "blue", "red"),
+  lwd = 2.5,
+  ylim = c(0, 10)
+)
+legend(
+  "topleft",
+  legend = c("Multiple Imputation",
+             "Harley-Knott Regression", "Extented HK"),
+  col = c("black", "blue", "red"),
+  lty = c(1, 1, 2),
+  cex = 0.7,
+  lwd = 2,
+  title = "Metode"
+)
+```
+
+## Model Selection
+
+In model selection, there are two approaches, forward selection and backward elimination. Forward selection is the stage of selecting the model by 'forward' selecting the most significant markers one by one. This process will stop when there are more markers that are potentially significant to the phenotype. While backward elimination, is the stage of selecting the model by 'backward' removing the markers that have the least significant effect.
+
+```{r}
+data_sim <- sim.geno(
+  cross = data,
+  step = 0,
+  error.prob = 0.001,
+  map.function = "haldane", 
+  n.draws = 296
+)
+```
+
+```{r eval=FALSE}
+set.seed(1)
+outsw <- stepwiseqtl(data_sim, verbose = TRUE, method = "imp")
+outsw
+```
+
+```{r echo = FALSE}
+outsw <- readRDS(file = "assets/outsw1.RDS")
+```
+
+Selection of the best model is determined by the highest penalized LOD value.
+
+```{r}
+summary(outsw)
+```
+
+Formula Model:
+
+$$y \sim Q1 + Q2 + Q3 + Q1:Q2 $$
+
+* y: Resistance phenotype score
+* $Q_i$: The i-th QTL marker
+
+after obtaining significant variables, we will create a QTL object and re-model (retrain) it with `fitqtl`.
+
+```{r}
+chr <- c(5, 5, 5)
+pos <- c(117.34, 159.31, 256.48)
+qtl <- makeqtl(data_sim, chr, pos)
+my.formula <- y ~ Q1 + Q2 + Q3 + Q1:Q2
+out.fitqtl <- fitqtl(data_sim,
+                     qtl = qtl,
+                     formula = my.formula,
+                     get.ests = F)
+summary(out.fitqtl)
+```
+
+We will summarize the important information in the following table:
+
+```{r}
+tibble(
+  Variabel = c("Q1", "Q2", "Q3", "Q1:Q2"),
+  `Kode Marka` = c("PMMCB81", "PMMCB34", "MCA32", "PMMCB81 : PMMCB34"),
+  `% Var` = c(18.25, 13.36, 2.79, 12.62)
+)
+```
+
+The first and second columns describe the symbol of the QTL model and its name. The percentage variance column (% var) is an estimate of the phenotype variance described by the PMMCB81, PMMCB34, MCA32 markers, and the PMMCB81: PMMCB34 marker interactions. The total % var was 46.3%. This means that the ability of all markers in the model to explain the phenotype variance scores of resistance to *phytophthora capsici* bacteria is 46.3%, while the rest is explained by other markers outside the observation.
+
+The visualization of the genetic map with a significant QTL model and the result of the multiple imputation method LOD score is presented in the figure below.
+
+
+```{r}
+par(mfrow=c(1,2))
+
+plot(
+  outsw,
+  col = "red",
+  justdots = F,
+  show.marker.names = F
+)
+plot(
+  data_imp$lod,
+  data_imp$pos,
+  col = "red",
+  xlab = "LOD",
+  ylim = c(315, 0),
+  las = 1,
+  ylab = "Map Position (cM)",
+  type = "l",
+  lwd = 3,
+  main = "Interval Mapping"
+)
+legend(
+  "bottomright",
+  legend = "Multiple Imputation",
+  col = "red",
+  lty = 1,
+  cex = 0.7,
+  lwd = 2,
+  title = "Metode",
+  bty = "n"
+)
+```
+
+---

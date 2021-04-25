@@ -3,7 +3,7 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>http://ahmadhusain.in/categories/</loc>
-    <lastmod>2019-09-21T22:05:18+07:00</lastmod>
+    <lastmod>2020-04-24T00:00:00+00:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="id"
@@ -15,14 +15,14 @@
                 href="http://ahmadhusain.in/categories/"
                 />
   </url><url>
-    <loc>http://ahmadhusain.in/tags/classification/</loc>
-    <lastmod>2019-09-21T22:05:18+07:00</lastmod>
+    <loc>http://ahmadhusain.in/tags/causal-impact/</loc>
+    <lastmod>2020-04-24T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://ahmadhusain.in/tags/deep-learning/</loc>
-    <lastmod>2019-09-21T22:05:18+07:00</lastmod>
+    <loc>http://ahmadhusain.in/post/causal-impact/</loc>
+    <lastmod>2020-04-24T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://ahmadhusain.in/</loc>
-    <lastmod>2019-09-21T22:05:18+07:00</lastmod>
+    <lastmod>2020-04-24T00:00:00+00:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="id"
@@ -34,23 +34,14 @@
                 href="http://ahmadhusain.in/"
                 />
   </url><url>
-    <loc>http://ahmadhusain.in/tags/lstm/</loc>
-    <lastmod>2019-09-21T22:05:18+07:00</lastmod>
-  </url><url>
-    <loc>http://ahmadhusain.in/tags/nlp/</loc>
-    <lastmod>2019-09-21T22:05:18+07:00</lastmod>
-  </url><url>
     <loc>http://ahmadhusain.in/post/</loc>
-    <lastmod>2019-09-21T22:05:18+07:00</lastmod>
+    <lastmod>2020-04-24T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://ahmadhusain.in/categories/r/</loc>
-    <lastmod>2019-09-21T22:05:18+07:00</lastmod>
-  </url><url>
-    <loc>http://ahmadhusain.in/tags/supervised-learning/</loc>
-    <lastmod>2019-09-21T22:05:18+07:00</lastmod>
+    <lastmod>2020-04-24T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://ahmadhusain.in/tags/</loc>
-    <lastmod>2019-09-21T22:05:18+07:00</lastmod>
+    <lastmod>2020-04-24T00:00:00+00:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="id"
@@ -62,8 +53,23 @@
                 href="http://ahmadhusain.in/tags/"
                 />
   </url><url>
-    <loc>http://ahmadhusain.in/post/text-lstm/</loc>
-    <lastmod>2019-09-21T22:05:18+07:00</lastmod>
+    <loc>http://ahmadhusain.in/tags/time-series/</loc>
+    <lastmod>2020-04-24T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://ahmadhusain.in/tags/deep-learning/</loc>
+    <lastmod>2018-09-21T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://ahmadhusain.in/tags/lstm/</loc>
+    <lastmod>2018-09-21T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://ahmadhusain.in/tags/machine-learning/</loc>
+    <lastmod>2018-09-21T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://ahmadhusain.in/tags/neural-network/</loc>
+    <lastmod>2018-09-21T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://ahmadhusain.in/post/2018-09-21-text-classification-with-lstm/</loc>
+    <lastmod>2018-09-21T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://ahmadhusain.in/tags/datavis/</loc>
     <lastmod>2018-09-15T00:00:00+00:00</lastmod>
@@ -73,6 +79,12 @@
   </url><url>
     <loc>http://ahmadhusain.in/post/2018-09-15-reproduce-economist-plot/</loc>
     <lastmod>2018-09-15T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://ahmadhusain.in/tags/bioinformatics/</loc>
+    <lastmod>2018-08-25T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://ahmadhusain.in/post/qtl-mapping/</loc>
+    <lastmod>2018-08-25T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://ahmadhusain.in/about/</loc>
     <xhtml:link

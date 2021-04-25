@@ -6,13 +6,22 @@
     <description>Recent content in Tags on Husain&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 21 Sep 2018 00:00:00 +0000</lastBuildDate><atom:link href="http://ahmadhusain.in/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 24 Apr 2020 00:00:00 +0000</lastBuildDate><atom:link href="http://ahmadhusain.in/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Classification</title>
-      <link>http://ahmadhusain.in/tags/classification/</link>
-      <pubDate>Fri, 21 Sep 2018 00:00:00 +0000</pubDate>
+      <title>Causal Impact</title>
+      <link>http://ahmadhusain.in/tags/causal-impact/</link>
+      <pubDate>Fri, 24 Apr 2020 00:00:00 +0000</pubDate>
       
-      <guid>http://ahmadhusain.in/tags/classification/</guid>
+      <guid>http://ahmadhusain.in/tags/causal-impact/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Time Series</title>
+      <link>http://ahmadhusain.in/tags/time-series/</link>
+      <pubDate>Fri, 24 Apr 2020 00:00:00 +0000</pubDate>
+      
+      <guid>http://ahmadhusain.in/tags/time-series/</guid>
       <description></description>
     </item>
     
@@ -35,20 +44,20 @@
     </item>
     
     <item>
-      <title>NLP</title>
-      <link>http://ahmadhusain.in/tags/nlp/</link>
+      <title>Machine Learning</title>
+      <link>http://ahmadhusain.in/tags/machine-learning/</link>
       <pubDate>Fri, 21 Sep 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://ahmadhusain.in/tags/nlp/</guid>
+      <guid>http://ahmadhusain.in/tags/machine-learning/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>Supervised Learning</title>
-      <link>http://ahmadhusain.in/tags/supervised-learning/</link>
+      <title>Neural Network</title>
+      <link>http://ahmadhusain.in/tags/neural-network/</link>
       <pubDate>Fri, 21 Sep 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://ahmadhusain.in/tags/supervised-learning/</guid>
+      <guid>http://ahmadhusain.in/tags/neural-network/</guid>
       <description></description>
     </item>
     
@@ -67,6 +76,15 @@
       <pubDate>Sat, 15 Sep 2018 00:00:00 +0000</pubDate>
       
       <guid>http://ahmadhusain.in/tags/ggplot2/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Bioinformatics</title>
+      <link>http://ahmadhusain.in/tags/bioinformatics/</link>
+      <pubDate>Sat, 25 Aug 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://ahmadhusain.in/tags/bioinformatics/</guid>
       <description></description>
     </item>
     
