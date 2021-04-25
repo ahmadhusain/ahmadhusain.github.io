@@ -131,16 +131,6 @@
         </div>
         <ul id="menu" onscroll="menu_on_scroll()">
             <li>
-                <a href="http://ahmadhusain.in/about" title="About">
-                    <span>About</span>
-                </a>
-            </li>
-            <li>
-                <a href="http://ahmadhusain.in/project" title="Project">
-                    <span>Project</span>
-                </a>
-            </li>
-            <li>
                 <a href="http://ahmadhusain.in/search/" title="Search (Alt &#43; /)" accesskey=/>
                     <span>Search</span>
                 </a>
@@ -153,16 +143,11 @@
         </ul>
     </nav>
 </header>
-<main class="main"> 
-<article class="first-entry home-info">
-    <header class="entry-header">
-        <h1>Hello 👋</h1>
-    </header>
-    <section class="entry-content">
-        <p>It&rsquo;s me Husain. A data science instructor.</p>
-    </section>
-    <footer class="entry-footer">
-        <div class="social-icons">
+<main class="main"><div class="profile">
+    <div class="profile_inner"><img src="/img/pp-blog.png" alt="profile image"
+            height="110" width="120" />
+        <h1>Hi.</h1>
+        <span>It&rsquo;s me Husain. Statistician having interest in machine learning 🧠, deep learning 🦄, and data visualization 📈. Currently work as data science instructor 👨‍🏫.</span><div class="social-icons">
     <a href="https://github.com/ahmadhusain" target="_blank" rel="noopener noreferrer me" title="Github">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
     stroke-linecap="round" stroke-linejoin="round">
@@ -196,55 +181,20 @@
     </a>
 </div>
 
-    </footer>
-</article>
+        <div class="buttons">
+            <a class="button" href="project" rel="noopener" title="Project">
+                <span class="button-inner">Project</span>
+            </a>
+            <a class="button" href="post" rel="noopener" title="Post">
+                <span class="button-inner">Post</span>
+            </a>
+            <a class="button" href="about" rel="noopener" title="About">
+                <span class="button-inner">About</span>
+            </a>
+        </div>
+    </div>
+</div>
 
-<article class="post-entry"> 
-<figure class="entry-cover"><img loading="lazy" src="http://ahmadhusain.in/img/causalimpact.png" alt="illustration from: https://shipratech.com/services/web-digital/lead-generation/ ">
-</figure>
-  <header class="entry-header">
-    <h2>Causal Impact on Leads Generation</h2>
-  </header>
-  <section class="entry-content">
-    <p>BackgroundIn the business process, the marketing team has a role to play in increasing the brand awareness of a product. When the marketing team’s efforts are successful to get the customer’s attention to find out the product, it will generate a lead. In a simple way, leads are people who are interested in a business product.
-In the digital era, leads can be interpreted as people who visit websites directly or through advertisements, people who like, share content or product campaigns....</p>
-  </section>
-  <footer class="entry-footer">April 24, 2020&nbsp;·&nbsp;7 min&nbsp;·&nbsp;Ahmad Husain Abdullah</footer>
-  <a class="entry-link" aria-label="post link to Causal Impact on Leads Generation" href="http://ahmadhusain.in/post/causal-impact/"></a>
-</article>
-
-<article class="post-entry"> 
-<figure class="entry-cover"><img loading="lazy" src="http://ahmadhusain.in/img/lstm.png" alt="">
-</figure>
-  <header class="entry-header">
-    <h2>Text Classification with LSTM</h2>
-  </header>
-  <section class="entry-content">
-    <p>Deep Neural NetworkBefore we further discuss the Long Short-Term Memory Model, we will first discuss the term of Deep learning where the main idea is on the Neural Network. So Neural Network is one branch of machine learning where the learning process imitates the way neurons in the human brain works. In Neural Network we know several terms, such as the input layer, hidden layer, and output layer....</p>
-  </section>
-  <footer class="entry-footer">September 21, 2018&nbsp;·&nbsp;19 min&nbsp;·&nbsp;Ahmad Husain</footer>
-  <a class="entry-link" aria-label="post link to Text Classification with LSTM" href="http://ahmadhusain.in/post/2018-09-21-text-classification-with-lstm/"></a>
-</article>
-
-<article class="post-entry"> 
-<figure class="entry-cover"><img loading="lazy" src="http://ahmadhusain.in/img/economist-plot.png" alt="">
-</figure>
-  <header class="entry-header">
-    <h2>Reproduce Economist Plot</h2>
-  </header>
-  <section class="entry-content">
-    <p>Here is a tutorial how to replicate an economist publication plot using ggplot2. Please prepare the library required first and download the data on the link below to follow the code.
-link for download the report: https://www2.deloitte.com/content/dam/Deloitte/cr/Documents/public-sector/2014-Social-Progress-IndexRepIMP.pdf
-Load Librarylibrary(tidyverse)library(pdftools)library(ggthemes)library(ggpubr)library(tm)library(grid)library(ggrepel)library(scales)Import Datadatatext &lt;- pdf_text(&#34;data_input/2014-Social-Progress-IndexRepIMP.pdf&#34;)Data Pre-Processingdatatext88 &lt;- datatext[[88]] %&gt;%read_lines()data1 &lt;- datatext88[7:50]head(data1)#&gt; [1] &#34; 1 New Zealand $25,857 88....</p>
-  </section>
-  <footer class="entry-footer">September 15, 2018&nbsp;·&nbsp;5 min&nbsp;·&nbsp;Ahmad Husain</footer>
-  <a class="entry-link" aria-label="post link to Reproduce Economist Plot" href="http://ahmadhusain.in/post/2018-09-15-reproduce-economist-plot/"></a>
-</article>
-<footer class="page-footer">
-  <nav class="pagination">
-    <a class="next" href="http://ahmadhusain.in/page/2/">Next Page »</a>
-  </nav>
-</footer>
     </main>
     <footer class="footer">
     <span>&copy; 2021 <a href="http://ahmadhusain.in/">Husain&#39;s Blog</a></span>
