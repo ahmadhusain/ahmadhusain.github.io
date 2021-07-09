@@ -9,8 +9,6 @@ tags:
   - Machine Learning
   - Text Mining
   - Price Optimization
-katex: true
-markup: 'mmark'
 cover:
     image: /img/mercari.png
 ---
