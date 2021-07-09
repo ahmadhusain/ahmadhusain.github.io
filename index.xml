@@ -6,7 +6,16 @@
     <description>Recent content on Husain&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 24 Apr 2020 00:00:00 +0000</lastBuildDate><atom:link href="http://ahmadhusain.in/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 22 Jun 2021 00:00:00 +0000</lastBuildDate><atom:link href="http://ahmadhusain.in/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Mercari Price Suggestion</title>
+      <link>http://ahmadhusain.in/post/2021-06-22-mercari-price-suggestion/</link>
+      <pubDate>Tue, 22 Jun 2021 00:00:00 +0000</pubDate>
+      
+      <guid>http://ahmadhusain.in/post/2021-06-22-mercari-price-suggestion/</guid>
+      <description>Mercari Challenge Mercari is Japan’s biggest community-powered shopping website. With the aim of realizing a society where global resources are used carefully and where everyone can live richly, the company has developed a flea market application ‘Mercari’ in Japan and the United States that allows individuals to easily and safely buy and sell goods. Mercari’s challenge is to build an algorithm that automatically suggests the right product prices to sellers on its app.</description>
+    </item>
+    
     <item>
       <title>Causal Impact on Leads Generation</title>
       <link>http://ahmadhusain.in/post/causal-impact/</link>

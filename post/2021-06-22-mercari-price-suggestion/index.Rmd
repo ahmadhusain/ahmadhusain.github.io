@@ -1,0 +1,684 @@
+---
+title: Mercari Price Suggestion
+author: Ahmad Husain
+date: '2021-06-22'
+slug: []
+categories:
+  - R
+tags:
+  - Machine Learning
+  - Text Mining
+  - Price Optimization
+katex: true
+markup: 'mmark'
+cover:
+    image: /img/mercari.png
+---
+
+
+```{r setup, include=FALSE}
+# clean up the environment
+rm(list = ls())
+gc()
+
+# setup chunk options
+knitr::opts_chunk$set(
+  message = FALSE,
+  warning = FALSE,
+  fig.align = "center",
+  comment = "#>"
+)
+
+options(scipen = 9999)
+```
+
+# Mercari Challenge
+
+[Mercari](https://www.mercari.com/) is Japan’s biggest community-powered shopping website. With the aim of realizing a society where global resources are used carefully and where everyone can live richly, the company has developed a flea market application ‘Mercari’ in Japan and the United States that allows individuals to easily and safely buy and sell goods. Mercari’s challenge is to build an algorithm that automatically suggests the right product prices to sellers on its app.
+
+Predicting the price of a product is a tough challenge since very similar products having minute differences such as different brand names, additional specifications, quality, demand of the product, etc. can have very different prices. For example, one of these sweaters cost `$335` and the other cost `$9.99`. Can you guess which one’s which?
+
+```{r echo=FALSE, out.width="600px", fig.cap="Image source: https://www.kaggle.com/c/mercari-price-suggestion-challenge/overview"}
+knitr::include_graphics("img/mercari-kaggle.png")
+```
+
+Price prediction gets even more difficult when there is a huge range of products, which is common with most of the online shopping platforms. Mercari’s sellers are allowed to list almost anything on the app. It’s highly challenging to predict the price of almost anything that is listed on online platforms. Lets start to read the data first.
+
+```{r libraries}
+library(tidyverse)
+library(data.table)
+library(quanteda)
+library(tictoc)
+library(Matrix)
+library(xgboost)
+library(MLmetrics)
+library(lubridate)
+library(pracma)
+```
+
+```{r}
+data_train <- read_csv("data/mercari/data-train.csv")
+
+glimpse(data_train)
+```
+
+The files consist of product listings. Originally the total size of the data is 1.03 GB. But for demo needs we reduce the number of product to 8000 pieces. Both train and test files have the following data fields:
+
+* `name`: the title of the listing. Note that we have cleaned the data to remove text that look like prices (e.g. $20) to avoid leakage. These removed prices are represented as [rm]
+* `item_condition_id`: the condition of the items provided by the seller
+* `category_name`: category of the listing
+* `brand_name`
+* `price`: the price that the item was sold for. This is the target variable that you will predict. The unit is USD. This column doesn't exist in test.tsv since that is what you will predict.
+* `shipping`: 1 if shipping fee is paid by seller and 0 by buyer
+* `item_description`: the full description of the item. Note that we have cleaned the data to remove text that look like prices (e.g. $20) to avoid leakage. These removed prices are represented as [rm]
+
+## Exploratory Data Analysis
+
+```{r}
+head(data_train)
+```
+
+For the next step, we will do some Exploratory Data Analysis (EDA) which aims to gain insight and improve our understanding of data by looking at a more detailed perspective, based on our business question. The first one we want to deep dive is price variable. How is it distributed? is it any outliers or anomalies? We can utilize the simple function called `summary()` to get statistics information.
+
+```{r}
+data_train %>% 
+  pull(price) %>% 
+  summary()
+```
+From the result above, some products cost `$0` and the other ones has extreme product prices that are far from the distribution. There seems to be an input error in the data which a price of `$0`. So we will remove the product with these conditions.
+
+```{r}
+data_train <- data_train %>% 
+  filter(price != 0)
+```
+
+## Data Preparation
+
+Next, we will prepare all string data type. If we are dealing or working with string data as a predictor of machine learning model, and we know the 'R case sensitive' characteristic, we need to convert all character to lower case format. So the word _Algoritma_ and _algoritma_ has the same meaning for our program. We can simply use `mutate_if(is.character, tolower)` syntax on our data. 
+
+The *item description* column contains blank and _no decription yet_ which is the same meaning. So lets convert it to a single word `null`.
+
+```{r}
+data_train <- data_train %>%
+  mutate_if(is.character, tolower) %>%
+  mutate(
+    item_description = ifelse(
+      item_description == "" | item_description == "no description yet",
+      "null",
+      item_description
+    )
+  )
+
+head(data_train, 6)
+```
+
+
+### Separate Category Name
+
+Observe that the entries of `category_name` are separated into subcategories by the '/' symbol. How many subcategories are there? we can run following code:
+
+```{r}
+temp_text <- "men/tops/t-shirts"
+
+str_count(temp_text, pattern = "/")
+```
+We use `str_count` function from stringr package to count the number of matches in a string. With the sample text above, we get the result two, which mean the sample consist of three subcategories ('result + 1'). Let's apply to our `category_name` column.
+
+```{r}
+data_train %>% 
+  pull(category_name) %>% 
+  str_count(pattern = "/") %>% 
+  unique()
+```
+The output shows the maximum number of subcategories is five. Also there are entries which no have values which need to convert as 'unknown' in the next step.
+
+We want record each subcategories name as a single column. Then, we prepare new columns names and use `separate()` function to separate a character column into multiple columns with a '/' separator. zTo make it clear how the function works, we will use sample data and only focus on 'category_name'. 
+
+```{r}
+subcat <- c('cat_1', 'cat_2', 'cat_3', 'cat_4',  'cat_5')
+
+temp_category <- data_train %>% 
+  select(name, category_name) %>% 
+  separate(col = category_name, into = subcat, sep = "/", remove = FALSE)
+
+tail(temp_category)
+```
+Then, lest apply to the original data.
+
+
+```{r}
+data_train <- data_train %>% 
+  separate(col = category_name, into = subcat, sep = "/")
+```
+
+Next, we will replace empty entries in data with 'unknown' character. Supposedly, if we check again with `anyNA()` function, there are no more NA data. Also, for the sake of decreasing computation cost, we will convert some of categorical columns to factor type.
+
+```{r}
+data_train <- data_train %>% 
+  replace(is.na(.), "unknown") %>% 
+  mutate(brand_name = ifelse(brand_name == "", "unknwon", brand_name)) %>% 
+  mutate_at(.vars = c("item_condition_id", "brand_name", "shipping", subcat), as.factor)
+
+anyNA(data_train)
+```
+We can compile all data preparation above as a reproducible function. If any new data input, we no need to execute line by line with the same command, but simply apply the function we created. We'll apply this function to test dataset later.
+
+```{r}
+data_prep <- function(data){
+  data_clean <- data %>%
+    filter(price != 0) %>%
+    mutate_if(is.character, tolower) %>%
+    mutate(
+      item_description = ifelse(
+        item_description == "" | item_description == "no description yet",
+        "null",
+        item_description
+      )
+    ) %>%
+    separate(col = category_name, into = subcat, sep = "/") %>%
+    replace(is.na(.), "unknown") %>%
+    mutate(brand_name = ifelse(brand_name == "", "unknwon", brand_name)) %>%
+    mutate_at(.vars = c("item_condition_id", "brand_name", "shipping", subcat),
+              as.factor)
+  
+  return(data_clean)
+}
+```
+
+### Document Feature Matrix
+
+Our task is to predict product price from all information entered by the merchant included item description, name, and category. To do so, we mine features from those textual data and fit to a machine learning model. Following are some approach to make our program understand every single words that entries to the system:
+
+1. Document Feature Matrix
+2. One Hot Encoding
+3. Data Sparse Matrix
+
+Document Feature Matrix or familiar called as Document Term Matrix is an important representation for text analysis. Each row of the matrix is a document vector which is our each product, and the column represent every term in the entire dictionary.
+
+Some documents may not contain certain terms, so these matrix are sparse. The value in each cell of the matrix is the **frequency term**. This value is often a weighted term frequency, typically using **Term Frequency-Inverse Document Frequency** (TF-IDF)
+
+**Why TFIDF?**
+
+Term Frequency approach to determine the weight of each term in a document based on the number of occurrences in the document. The greater the number of occurrences (high TF), the greater its weight in the document. But, there are not important words that appear several time in the document which can be biased during modelling.
+
+So Inverse Document Frequency approach come up to solve that problem. Inverse Document Frequency (IDF) to reduce the dominance of words that often appear in various documents. This step is necessary because words that appear a lot in various document can be considered as general terms so the value will set to 'not important'. TF-IDF to measure how important a word is in the corpus.
+
+```{r}
+build_dfm <- function(x, n = 1) {
+  
+  mat <- dfm(
+    x,
+    tolower = TRUE,
+    remove_punct = TRUE,
+    remove_symbols = TRUE,
+    remove_numbers = TRUE,
+    remove = stopwords("english"),
+    ngrams = n
+  )
+
+  mat <- dfm_tfidf(mat)
+  
+  return(mat)
+  
+}
+```
+
+After we do Document Feature Matrix for column `name` and `item_description`, we combine them into one data matrix. So imagine if the `nike` column contains the word 'nike' and the `item_description` column also contains the word 'nike', the result may be misleading. For instance, please look the sample below:
+
+```{r echo=FALSE, out.width="600px", fig.cap="Original sample data"}
+knitr::include_graphics("img/dfm-original-data.png")
+```
+
+```{r echo=FALSE, out.width="800px", fig.cap="DFM result"}
+knitr::include_graphics("img/join-dfm.png")
+```
+
+It's too difficult for our machine to understand the word 'nike' which is the product name, and the word 'nike' as a item description. So the solution is to paste the context of each column to the rest of the features, to define a new colnames more unique. 
+
+```{r}
+tic()
+dfm_item_description <- build_dfm(x = data_train$item_description)
+dfm_item_description@Dimnames[[2]] <- paste0("desc_", dfm_item_description@Dimnames[[2]])
+toc()
+
+tic()
+dfm_name <- build_dfm(x = data_train$name)
+dfm_name@Dimnames[[2]] <- paste0("name_", dfm_name@Dimnames[[2]])
+toc()
+```
+
+### One-hot Encoding
+
+Categorical data refers to variables that are made up of label values, for example, a “performance level” variable could have the values “low“, “medium, and “high”. One-hot encoding is a scheme of vectorization where each category in a categorical variable is converted into a vector of length equal to the number of data points. The vector contains a value of 1 against each data point that belongs to the category corresponding to the vector and contains 0 otherwise. To make it clearer, look at the following example.
+
+```{r echo=FALSE, out.width="600px", fig.cap="One-hot encoding concept"}
+knitr::include_graphics("img/one-hot.png")
+```
+
+We will converted all the categorical variables (item_condition, shipping, brand_name, cat_1, ..., cat_5) to their one-hot encoded vectors. Example code is shown below:
+
+```{r}
+temp <- sparse.model.matrix(~ brand_name + cat_1 + cat_2 + cat_3 + cat_4 + cat_5, 
+                            data = data_train[1:10, c("item_condition_id", "brand_name", "shipping", subcat)])
+
+temp %>% 
+  as.matrix() %>% 
+  as.data.frame() %>% 
+  select(1:6) %>% 
+  head()
+```
+
+Since we know our data will probably have a lot of zero values, so we will use the sparse matrix to store the data we have processed. A sparse matrix is a matrix that is comprised of mostly zero values. 
+
+> A matrix is sparse if many of its coefficients are zero. The interest in sparsity arises because its exploitation can lead to enormous computational savings and because many large matrix problems that occur in practice are sparse.
+
+Often you may deal with large matrices that are sparse with a few non-zero elements. In such scenarios, keeping the data in full dense matrix and working with it is not efficient. 
+
+A better way to deal with such sparse matrices is to use the special data structures that allows to store the sparse data efficiently. In R, the `matrix` package offers great solutions to deal with large sparse matrices.
+
+Let's see comparison between dense matrix and sparse matrix in term of the size. Let us create a dummy data and randomly select the indices and make them to contain zeroes.
+
+```{r}
+data <- rnorm(1e6)
+zero_index <- sample(1e6)[1:9e5]
+data[zero_index] <- 0
+```
+
+Now we have created a vector of million elements, but 90% of the elements are zeros. Let us make it into a dense matrix.
+
+```{r}
+mat <- matrix(data, ncol=1000)
+mat[1:5,1:5]
+```
+We can use R function object.size and check the size of the dense matrix.
+
+```{r}
+print(object.size(mat),units="auto")
+```
+Let us use sparse matrix library to convert the dense matrix to sparse matrix. We can see that elements with no values are shown as dots.
+
+```{r}
+mat_sparse <- Matrix(mat, sparse = TRUE)
+mat_sparse[1:5, 1:5]
+```
+
+It tells us that our sparse matrix belongs to a class “dgCMatrix”. The sparse matrix type “dgCMatrix” refers to double sparse matrix stored in CSC, Compressed Sparse Column format. A sparse matrix in CSC format is column-oriented format and it is implemented such that the non-zero elements in the columns are sorted into increasing row order. Let us check the size of our sparse matrix.
+
+```{r}
+print(object.size(mat_sparse),units="auto")
+```
+The sparse matrix stores the same data in just about 1 Mb, way more memory efficient than the dense matrix. About seven times smaller than the dense matrix. So lets apply in our data train:
+
+```{r}
+tic()
+one_hot_train <- sparse.model.matrix(
+    ~ item_condition_id + shipping + brand_name +
+    cat_1 + cat_2 + cat_3 + cat_4 + cat_5,
+    data = data_train[c("item_condition_id", "brand_name", "shipping", subcat)])
+toc()
+```
+
+Next, we will change object type of `dfm_item_description` and `dfm_name` as a dgCMatrix then combine them as one data that ready for modelling.
+
+```{r}
+class(dfm_item_description) <- class(one_hot_train)
+class(dfm_name) <- class(one_hot_train)
+
+tic()
+data_train_sparse <- cbind(
+        one_hot_train, 
+        dfm_item_description,
+        dfm_name)
+
+rownames(data_train_sparse) <- NULL
+toc()
+```
+
+## Modelling with XGBoost
+
+XGBoost was formulated by Tianqi Chen which started as a research project a part of The _Distributed Deep Machine Leaning Community (DMLC)_ group. XGBoost is one of popular algorithm because it has been the winning algorithm in a number of recent Kaggle competitions. XGBoost is a specific implementation of the Gradient Boosting Model which uses more accurate approximations to find the best tree model. XGBoost specifically used a more regularized model formalization to control overfitting, which gives it better perfomance.
+
+### Concept
+
+Xgboost works through the system optimization:
+
+```{r echo=FALSE, out.width="600px"}
+knitr::include_graphics("img/xgboost.png")
+```
+
+**1. Parallelized tree building**
+
+XGBoost approaches the process of sequential tree building using parallelized implementation.
+
+**2. Tree pruning**
+
+Unlike GBM, where tree pruning stops once a negative loss is encountered, XGBoost grows the tree up to `max_depth` and then prune backward until the improvement in loss function is below a threshold.
+
+**3. Cache awareness and out of core computing**
+
+XGBoost has been designed to efficiently reduce computing time and allocate an optimal usage of memory resources. This is accomplished by cache awareness by allocating internal buffers in each thread to store gradient statistics. Further enhancements such as ‘out-of-core’ computing optimize available disk space while handling big data-frames that do not fit into memory.
+
+**4. Regularization**
+
+The biggest advantage of XGBoost is regularization. Regularization is a technique used to avoid overfitting in linear and tree based models which limits, regulates or shrink the estimated coefficient towards zero.
+
+**5. Handles missing value**
+
+This algorithm has important features of handling missing values by learns the best direction for missing values. The missing values are treated them to combine a sparsity-aware split finding algorithm to handle different types of sparsity patterns in data.
+
+**6. Built-in cross validation**
+
+The algorithm comes with built in cross validation method at each iteration, taking away the need to explicitly program this search and to specify the exact number of boosting iterations required in a single run.
+
+### Parameter
+
+There is no benchmark to define the ideal parameters because it will depend on your data and specific problem. XGBoost parameters can defined into three categories:
+
+For more detail parameter, the full list of possible parameters is available on the documentation [XGBoost Parameters](https://xgboost.readthedocs.io/en/latest/parameter.html)
+
+#### General 
+
+Controls the booster type in the model which eventually drives overall functioning.
+
+1. `booster`
+
+For regression problems, we can use `gbtree` and `gblinear`. In `gblinear`, it builds a generalized linear model and optimizes it using regularization and gradient descent. The next model will built on residuals generated by previous iterations.
+
+2. `nthread`
+
+To enable parallel computing. The default is the maximum number of threads available.
+
+3. `verbosity` (logging)
+
+Verbosity to display warning messages. The default value is 1 (warning), 0 for silent, 2 for info, and 3 for debug.
+
+#### Boosting Parameter
+
+Controls the performance of the selected booster
+
+1. `eta` (alias learning_rate)
+
+The range of eta is 0 to 1 and default value is 0.3. It controls the maximum number of iterations, the lower eta will generate the slower computation.
+
+2. `gamma` (alias min_split_loss)
+
+The range of gamma is 0 to infinite and default value is 0 (no regularization). The higher gamma is the higher regularization, regularization means penalizing large coefficients that don't improve the model's performance.
+
+3. `max_depth`
+
+Maximum depth of a tree. The range of max_depth is 0 to infinite and default value is 6, increasing this value will make the model more complex and more likely to overfit.
+
+4. `min_child_weight`
+
+The range of min_child_weight is 0 to infinite and default value is 1. If the leaf node has a minimum sum of instance weight lower than min_child_weight in the tree partition step than the process of splitting the tree will stop growing.
+
+5. `subsample`
+
+The range of subsample is 0 to 1 and default value is 1. It controls the number of ratio observations to a tree. If the value is set to 0.5 means that XGboost would randomly sample half of the training data prior to growing trees and this will prevent overfitting. subsample will occur once in every boosting iteration.
+
+6. `colsample_bytree`
+
+The range of colsample_bytree is 0 to 1 and default value is 1. It controls the subsample ratio of columns when constructing each tree.
+
+### Learning Task Parameter
+
+Sets and evaluates the learning process of booster from the given data.
+
+1. objective
+
+* `reg:squarederror` for regression with squared loss
+* `binary:logistic` for binary classification, output probability
+
+2. eval_metric
+
+Evaluation metrics for validation data, a default metric will be assigned according to objective:
+
+* rmse for regression
+* logloss for classification
+
+### Modelling
+
+```{r}
+data_train_xgb <- xgb.DMatrix(data = data_train_sparse, label = data_train$price)
+```
+
+Let's build a model and implement a few parameters that can affect our model's performance and training speed.
+
+```{r}
+tic()
+model <- xgboost(data = data_train_xgb, nround = 500, objective = "reg:squarederror", verbose = FALSE)
+toc()
+```
+```{r}
+model$evaluation_log %>% 
+  ggplot(aes(x = iter, y = train_rmse)) +
+  geom_line() +
+  labs(title = "Model evaluation log",
+       y = "RMSE data train",
+       x = "Iteration") 
+  
+```
+From the graph above, can we say that the curve is not yet fully convergent? if yes, then that's a good sign our model can still be improved by increasing the number of iterations. for those of you who are curious, you can do it by yourself, because it is quite time consuming.
+
+### Model Evaluation
+
+```{r}
+pred_train <- predict(model, data_train_sparse)
+```
+
+```{r}
+result_train <- data_train %>% 
+  select(actual = price) %>% 
+  mutate(prediction = pred_train)
+
+result_train %>% 
+  sample_n(10)
+```
+
+- **Mean Absolute Error**
+
+There are many ways of measuring a model’s accuracy. However, the Mean Absolute Error, also known as MAE, is one of the many metrics for summarizing and assessing the quality of a machine learning model, especially for regression task. In MAE the error is calculated as an average of absolute differences between the target values and the predictions. 
+
+$$MAE = \frac{1}{n}\sum_{t=1}^{n}|e_t|$$
+
+
+- **Root Mean Squared Error**
+
+RMSE is a quadratic scoring rule that also measures the average magnitude of the error. It’s the square root of the average of squared differences between prediction and actual observation.
+
+$$RMSE = \sqrt{\frac{1}{n}\sum_{t=1}^{n}e_t^2}$$
+
+
+
+- **Mean Absolute Percentage Error**
+
+MAPE measures the accuracy as a percentage, and can be calculated as the average absolute percent error for each time period minus actual values divided by actual values. 
+
+$$MAPE = \frac{100\%}{n}\sum_{t=1}^{n}\left |\frac{e_t}{y_t}\right|$$
+
+```{r}
+rmse_train <- RMSE(y_pred = result_train$prediction, y_true = result_train$actual)
+rmse_train
+```
+
+```{r}
+result_train %>%
+  sample_n(150) %>%
+  mutate(no = 1:150) %>%
+  pivot_longer(cols = c(actual, prediction),
+               names_to = "label") %>%
+  ggplot(aes(y = value)) +
+  geom_line(aes(x = no,
+                col = label)) +
+  scale_color_manual(values = c("firebrick", "dodgerblue")) +
+  labs(x = "Row indices",
+       y = "Product price",
+       title = "Comparasion actual vs prediction price",
+       subtitle = "Sample of data train",
+       caption = paste("RMSE:", round(rmse_train, 2))) +
+  theme(legend.position = "bottom")
+```
+
+### Predict on Test Data
+
+After develop model machine learning on train data set, what is the next step? 
+
+- Pick a final model based on an evaluation criteria (the best accurate model)  
+- Obtain an unbiased measurement of the model's accuracy by predicting on test set data
+
+The idea of obtaining an unbiased estimate of our model's out-of-sample performance is an important one as it is often the case that the in-sample error (the error you obtain from running your algorithm on the dataset it was trained on) is optimistic and tuned / adapted in a particular way to minimize the error in the training sample.
+
+Therefore - the in-sample error is not a good representation or indication of how our model will perform when it is applied on unseen data. 
+
+Another way to think about is that our training data has two components to it: signal and noise. The goal of machine learning is to identify the signal but be robust enough to avoid modeling the **noise** component of the data. 
+
+When we build a model, we want to know that our model is not overly adapted to the data set to the point that it captures both the signal and noise, a phenomenon known as **"overfitting"**.  When our model is guilty of overfitting, the in-sample accuracy will be very high (in some cases ~100%) but fail to perform on unseen data. **The idea is to strike the right balance between accuracy (don't underfit) and robustness to noise (don't overfit).**  
+
+#### Data Preparation
+
+Let's us import and do some data pre-processing like we did before in training dataset.
+
+```{r}
+data_test <- read_csv("data/mercari/data-test.csv") 
+
+glimpse(data_test)
+```
+Recall, previously we made a custom function to prepare our unseen data. So, its time we use it on test data set. its look very straightforward, we just simply call the function and set the desired data.
+
+```{r}
+data_test <- data_prep(data = data_test)
+
+head(data_test)
+```
+#### Document Feature Matrix
+
+Here are the same things like we did on training set data. Build a document feature matrix on unseen data. However, there are some adjustments later regarding to the dictionary/corpus. Right now, take your time to remembering the meaning of each command we used.
+
+```{r}
+tic()
+dfm_item_description_test <- build_dfm(x = data_test$item_description)
+dfm_item_description_test@Dimnames[[2]] <- paste0("desc_", dfm_item_description_test@Dimnames[[2]])
+toc()
+
+tic()
+dfm_name_test <- build_dfm(x = data_test$name)
+dfm_name_test@Dimnames[[2]] <- paste0("name_", dfm_name_test@Dimnames[[2]])
+toc()
+```
+
+```{r}
+tic()
+data_test_sparse <- sparse.model.matrix(
+    ~ item_condition_id + shipping +
+    cat_1 + cat_2 + cat_3 + cat_4 + cat_5,
+    data = data_test[c("item_condition_id", "brand_name", "shipping", subcat)]
+)
+toc()
+
+class(dfm_item_description_test) <- class(data_test_sparse)
+class(dfm_name_test) <- class(data_test_sparse)
+```
+Combine data one-hot encoding, sparse matrix item description, and sparse matrix name product of our test data set.
+```{r}
+tic()
+data_test_sparse <- cbind(
+        data_test_sparse, 
+        dfm_item_description_test,
+        dfm_name_test)
+toc()
+```
+#### Features Matching
+
+Classic problem when dealing with text data predictors is, thare are words that do not appear in new data (test data set). So the dimension between training set and testing set data is different. if we force the model to predict the data, obviously it will error. 
+
+```{r}
+data_train_sparse@Dim
+data_test_sparse@Dim
+```
+Look, total training data columns is 22756 while the test data only 9035. Of course, we need to equate the features of training set and testing set data. First we need to check, which training data columns is not in the test data? following are the commands we used.
+
+```{r}
+select_empty <- data_train_sparse@Dimnames[[2]][!(data_train_sparse@Dimnames[[2]] %in% data_test_sparse@Dimnames[[2]])]
+```
+
+Then, we generate a new sparse matrix from the result above. Replace all missing value with 0, because in fact the test data does not contain some of these features. 
+
+```{r}
+tic()
+data_test_empty <- setNames(data.frame(matrix(ncol = length(select_empty), nrow = nrow(data_test))), select_empty) %>% 
+  replace(is.na(.), 0) %>% 
+  as.matrix() %>% 
+  as("sparseMatrix")
+toc()
+```
+
+Lets combine the data and check the dimension again.
+
+```{r}
+data_test_sparse <- cbind(
+  data_test_sparse,
+  data_test_empty
+)
+
+data_test_sparse@Dim
+```
+We can see that the column size is same with training data. Not finished yet, we need to match the order of test data columns as in the training set data. Why? this due to the functional requirements of the XGBoost model object it need the same order of columns as learned. Of course this will take quite a while to process.
+
+```{r}
+df_test_complete <- data_test_sparse %>% 
+  as.matrix() %>% 
+  as.data.frame()
+
+data_test_sparse <- df_test_complete[,data_train_sparse@Dimnames[[2]]] %>% 
+    as.matrix() %>% 
+    as("sparseMatrix")
+
+rownames(data_test_sparse) <- NULL
+```
+
+Do not forget to convert as `xgb DMatrix`. 
+
+```{r}
+data_test_xgb <- xgb.DMatrix(data_test_sparse)
+```
+
+#### Model Evaluation Data Test
+
+We have finished preparing new data. Now, we can move to prediction step and evaluation model. Let’s use the generic `predict()` function to predict with the model we’ve constructed, on the test set data to get a sense of it’s performance on unseen data:
+
+```{r}
+pred_test <- predict(model, data_test_xgb)
+```
+
+```{r}
+result_test <- data_test %>% 
+  select(actual = price) %>% 
+  mutate(prediction = pred_test)
+
+result_test
+```
+
+```{r}
+rmse_test <- RMSE(y_pred = result_test$prediction, y_true = result_test$actual)
+rmse_test
+```
+
+```{r}
+result_test %>%
+  sample_n(150) %>%
+  mutate(no = 1:150) %>%
+  pivot_longer(cols = c(actual, prediction), names_to = "label") %>%
+  ggplot(aes(y = value)) +
+  geom_line(aes(x = no,
+                col = label)) +
+  scale_color_manual(values = c("firebrick", "dodgerblue")) +
+  labs(
+    x = "Row indices",
+    y = "Product price",
+    title = "Comparasion actual vs prediction price",
+    subtitle = "Sample of data test",
+    caption = paste("RMSE:", round(rmse_test, 2))
+  ) +
+  theme(legend.position = "bottom")
+```
+A 13.79 RMSE on unseen data! it seems the model is good enough to predict prices on the new data. 

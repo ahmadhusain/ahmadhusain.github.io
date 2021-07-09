@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Mercari Price Suggestion | Husain&#39;s Blog</title>
+<meta name="keywords" content="Machine Learning, Text Mining, Price Optimization" />
+<meta name="description" content="Mercari Challenge Mercari is Japan’s biggest community-powered shopping website. With the aim of realizing a society where global resources are used carefully and where everyone can live richly, the company has developed a flea market application ‘Mercari’ in Japan and the United States that allows individuals to easily and safely buy and sell goods. Mercari’s challenge is to build an algorithm that automatically suggests the right product prices to sellers on its app.">
+<meta name="author" content="Ahmad Husain">
+<link rel="canonical" href="http://ahmadhusain.in/post/2021-06-22-mercari-price-suggestion/" />
+<link crossorigin="anonymous" href="/assets/css/stylesheet.min.ade87ea3120e9a1c6cc946e04768c952fa699fdea531ca3a5b082b605b467f77.css" integrity="sha256-reh&#43;oxIOmhxsyUbgR2jJUvppn96lMco6WwgrYFtGf3c=" rel="preload stylesheet" as="style">
+<script defer crossorigin="anonymous" src="/assets/js/highlight.min.7680afc38aa6b15ddf158a4f3780b7b1f7dde7e91d26f073e6229bb7a0793c92.js" integrity="sha256-doCvw4qmsV3fFYpPN4C3sffd5&#43;kdJvBz5iKbt6B5PJI="
+    onload="hljs.initHighlightingOnLoad();"></script>
+<link rel="icon" href="https://ahmadhusain.in/img/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://ahmadhusain.in/img/favicon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://ahmadhusain.in/img/favicon.png">
+<link rel="apple-touch-icon" href="http://ahmadhusain.in/apple-touch-icon.png">
+<link rel="mask-icon" href="http://ahmadhusain.in/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<meta name="generator" content="Hugo 0.82.0" />
+<link rel="alternate" hreflang="en" href="http://ahmadhusain.in/post/2021-06-22-mercari-price-suggestion/" />
+<meta property="og:title" content="Mercari Price Suggestion" />
+<meta property="og:description" content="Mercari Challenge Mercari is Japan’s biggest community-powered shopping website. With the aim of realizing a society where global resources are used carefully and where everyone can live richly, the company has developed a flea market application ‘Mercari’ in Japan and the United States that allows individuals to easily and safely buy and sell goods. Mercari’s challenge is to build an algorithm that automatically suggests the right product prices to sellers on its app." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://ahmadhusain.in/post/2021-06-22-mercari-price-suggestion/" />
+<meta property="og:image" content="http://ahmadhusain.in/img/mercari.png" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2021-06-22T00:00:00&#43;00:00" />
+<meta property="article:modified_time" content="2021-06-22T00:00:00&#43;00:00" />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="http://ahmadhusain.in/img/mercari.png" />
+<meta name="twitter:title" content="Mercari Price Suggestion"/>
+<meta name="twitter:description" content="Mercari Challenge Mercari is Japan’s biggest community-powered shopping website. With the aim of realizing a society where global resources are used carefully and where everyone can live richly, the company has developed a flea market application ‘Mercari’ in Japan and the United States that allows individuals to easily and safely buy and sell goods. Mercari’s challenge is to build an algorithm that automatically suggests the right product prices to sellers on its app."/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "http://ahmadhusain.in/post/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Mercari Price Suggestion",
+      "item": "http://ahmadhusain.in/post/2021-06-22-mercari-price-suggestion/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Mercari Price Suggestion",
+  "name": "Mercari Price Suggestion",
+  "description": "Mercari Challenge Mercari is Japan’s biggest community-powered shopping website. With the aim of realizing a society where global resources are used carefully and where everyone can live richly, the company has developed a flea market application ‘Mercari’ in Japan and the United States that allows individuals to easily and safely buy and sell goods. Mercari’s challenge is to build an algorithm that automatically suggests the right product prices to sellers on its app.",
+  "keywords": [
+    "Machine Learning", "Text Mining", "Price Optimization"
+  ],
+  "articleBody": " Mercari Challenge Mercari is Japan’s biggest community-powered shopping website. With the aim of realizing a society where global resources are used carefully and where everyone can live richly, the company has developed a flea market application ‘Mercari’ in Japan and the United States that allows individuals to easily and safely buy and sell goods. Mercari’s challenge is to build an algorithm that automatically suggests the right product prices to sellers on its app.\nPredicting the price of a product is a tough challenge since very similar products having minute differences such as different brand names, additional specifications, quality, demand of the product, etc. can have very different prices. For example, one of these sweaters cost $335 and the other cost $9.99. Can you guess which one’s which?\n Figure 1: Image source: https://www.kaggle.com/c/mercari-price-suggestion-challenge/overview  Price prediction gets even more difficult when there is a huge range of products, which is common with most of the online shopping platforms. Mercari’s sellers are allowed to list almost anything on the app. It’s highly challenging to predict the price of almost anything that is listed on online platforms. Lets start to read the data first.\nlibrary(tidyverse) library(data.table) library(quanteda) library(tictoc) library(Matrix) library(xgboost) library(MLmetrics) library(lubridate) library(pracma) data_train  # Rows: 8,000 # Columns: 8 # $ train_id  3785, 502, 3429, 3695, 4089, 7885, 3051, 8191, 8661,… # $ name  \"Crystal Flower .925 SP Earrings Bundle\", \"NEW IN BO… # $ item_condition_id  2, 1, 1, 2, 1, 2, 1, 3, 2, 1, 1, 1, 1, 1, 1, 2, 3, 1… # $ category_name  \"Women/Jewelry/Earrings\", \"Electronics/Cell Phones \u0026… # $ brand_name  NA, \"Belkin\", \"MARC JACOBS\", \"PINK\", NA, \"Nautica\", … # $ price  5, 15, 11, 13, 10, 10, 124, 66, 10, 7, 18, 39, 46, 3… # $ shipping  1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0… # $ item_description  \"Perfect for Spring! Bundle of 2 pair crystal flower… The files consist of product listings. Originally the total size of the data is 1.03 GB. But for demo needs we reduce the number of product to 8000 pieces. Both train and test files have the following data fields:\n name: the title of the listing. Note that we have cleaned the data to remove text that look like prices (e.g. $20) to avoid leakage. These removed prices are represented as [rm] item_condition_id: the condition of the items provided by the seller category_name: category of the listing brand_name price: the price that the item was sold for. This is the target variable that you will predict. The unit is USD. This column doesn’t exist in test.tsv since that is what you will predict. shipping: 1 if shipping fee is paid by seller and 0 by buyer item_description: the full description of the item. Note that we have cleaned the data to remove text that look like prices (e.g. $20) to avoid leakage. These removed prices are represented as [rm]  Exploratory Data Analysis head(data_train) # # A tibble: 6 x 8 # train_id name item_condition_id category_name brand_name price shipping #        # 1 3785 Crystal… 2 Women/Jewelry/E…  5 1 # 2 502 NEW IN … 1 Electronics/Cel… Belkin 15 1 # 3 3429 Marc Ja… 1 Beauty/Makeup/L… MARC JACO… 11 1 # 4 3695 Vs pink… 2 Women/Underwear… PINK 13 1 # 5 4089 Brand n… 1 Women/Other/Oth…  10 1 # 6 7885 Mens XX… 2 Men/Tops/T-shir… Nautica 10 0 # # … with 1 more variable: item_description  For the next step, we will do some Exploratory Data Analysis (EDA) which aims to gain insight and improve our understanding of data by looking at a more detailed perspective, based on our business question. The first one we want to deep dive is price variable. How is it distributed? is it any outliers or anomalies? We can utilize the simple function called summary() to get statistics information.\ndata_train %% pull(price) %% summary() # Min. 1st Qu. Median Mean 3rd Qu. Max. # 0.00 10.00 17.00 26.59 29.00 1506.00 From the result above, some products cost $0 and the other ones has extreme product prices that are far from the distribution. There seems to be an input error in the data which a price of $0. So we will remove the product with these conditions.\ndata_train % filter(price != 0)  Data Preparation Next, we will prepare all string data type. If we are dealing or working with string data as a predictor of machine learning model, and we know the ‘R case sensitive’ characteristic, we need to convert all character to lower case format. So the word Algoritma and algoritma has the same meaning for our program. We can simply use mutate_if(is.character, tolower) syntax on our data.\nThe item description column contains blank and no decription yet which is the same meaning. So lets convert it to a single word null.\ndata_train % mutate_if(is.character, tolower) %% mutate( item_description = ifelse( item_description == \"\" | item_description == \"no description yet\", \"null\", item_description ) ) head(data_train, 6) # # A tibble: 6 x 8 # train_id name item_condition_id category_name brand_name price shipping #        # 1 3785 crystal… 2 women/jewelry/e…  5 1 # 2 502 new in … 1 electronics/cel… belkin 15 1 # 3 3429 marc ja… 1 beauty/makeup/l… marc jaco… 11 1 # 4 3695 vs pink… 2 women/underwear… pink 13 1 # 5 4089 brand n… 1 women/other/oth…  10 1 # 6 7885 mens xx… 2 men/tops/t-shir… nautica 10 0 # # … with 1 more variable: item_description  Separate Category Name Observe that the entries of category_name are separated into subcategories by the ‘/’ symbol. How many subcategories are there? we can run following code:\ntemp_text  # [1] 2 We use str_count function from stringr package to count the number of matches in a string. With the sample text above, we get the result two, which mean the sample consist of three subcategories (‘result + 1’). Let’s apply to our category_name column.\ndata_train %% pull(category_name) %% str_count(pattern = \"/\") %% unique() # [1] 2 4 NA 3 The output shows the maximum number of subcategories is five. Also there are entries which no have values which need to convert as ‘unknown’ in the next step.\nWe want record each subcategories name as a single column. Then, we prepare new columns names and use separate() function to separate a character column into multiple columns with a ‘/’ separator. zTo make it clear how the function works, we will use sample data and only focus on ‘category_name’.\nsubcat % select(name, category_name) %% separate(col = category_name, into = subcat, sep = \"/\", remove = FALSE) tail(temp_category) # # A tibble: 6 x 7 # name category_name cat_1 cat_2 cat_3 cat_4 cat_5 #        # 1 body control beauty/skin care/body beauty skin care body   # 2 tide pods bu… home/cleaning supplies/h… home cleaning… househol…   # 3 xs vs pink w… women/athletic apparel/t… women athletic… tracksui…   # 4 apple iphone… electronics/cell phones … elect… cell pho… cell pho…   # 5 butterfly wi… home/home décor/home déc… home home déc… home déc…   # 6 crystal clea… electronics/cell phones … elect… cell pho… cases, c…   Then, lest apply to the original data.\ndata_train % separate(col = category_name, into = subcat, sep = \"/\") Next, we will replace empty entries in data with ‘unknown’ character. Supposedly, if we check again with anyNA() function, there are no more NA data. Also, for the sake of decreasing computation cost, we will convert some of categorical columns to factor type.\ndata_train % replace(is.na(.), \"unknown\") %% mutate(brand_name = ifelse(brand_name == \"\", \"unknwon\", brand_name)) %% mutate_at(.vars = c(\"item_condition_id\", \"brand_name\", \"shipping\", subcat), as.factor) anyNA(data_train) # [1] FALSE We can compile all data preparation above as a reproducible function. If any new data input, we no need to execute line by line with the same command, but simply apply the function we created. We’ll apply this function to test dataset later.\ndata_prep % filter(price != 0) %% mutate_if(is.character, tolower) %% mutate( item_description = ifelse( item_description == \"\" | item_description == \"no description yet\", \"null\", item_description ) ) %% separate(col = category_name, into = subcat, sep = \"/\") %% replace(is.na(.), \"unknown\") %% mutate(brand_name = ifelse(brand_name == \"\", \"unknwon\", brand_name)) %% mutate_at(.vars = c(\"item_condition_id\", \"brand_name\", \"shipping\", subcat), as.factor) return(data_clean) }  Document Feature Matrix Our task is to predict product price from all information entered by the merchant included item description, name, and category. To do so, we mine features from those textual data and fit to a machine learning model. Following are some approach to make our program understand every single words that entries to the system:\nDocument Feature Matrix One Hot Encoding Data Sparse Matrix  Document Feature Matrix or familiar called as Document Term Matrix is an important representation for text analysis. Each row of the matrix is a document vector which is our each product, and the column represent every term in the entire dictionary.\nSome documents may not contain certain terms, so these matrix are sparse. The value in each cell of the matrix is the frequency term. This value is often a weighted term frequency, typically using Term Frequency-Inverse Document Frequency (TF-IDF)\nWhy TFIDF?\nTerm Frequency approach to determine the weight of each term in a document based on the number of occurrences in the document. The greater the number of occurrences (high TF), the greater its weight in the document. But, there are not important words that appear several time in the document which can be biased during modelling.\nSo Inverse Document Frequency approach come up to solve that problem. Inverse Document Frequency (IDF) to reduce the dominance of words that often appear in various documents. This step is necessary because words that appear a lot in various document can be considered as general terms so the value will set to ‘not important’. TF-IDF to measure how important a word is in the corpus.\nbuild_dfm  After we do Document Feature Matrix for column name and item_description, we combine them into one data matrix. So imagine if the nike column contains the word ‘nike’ and the item_description column also contains the word ‘nike’, the result may be misleading. For instance, please look the sample below:\n Figure 2: Original sample data   Figure 3: DFM result  It’s too difficult for our machine to understand the word ‘nike’ which is the product name, and the word ‘nike’ as a item description. So the solution is to paste the context of each column to the rest of the features, to define a new colnames more unique.\ntic() dfm_item_description  # elapsed time is 0.846000 seconds tic() dfm_name  # elapsed time is 0.381000 seconds  One-hot Encoding Categorical data refers to variables that are made up of label values, for example, a “performance level” variable could have the values “low“, “medium, and “high”. One-hot encoding is a scheme of vectorization where each category in a categorical variable is converted into a vector of length equal to the number of data points. The vector contains a value of 1 against each data point that belongs to the category corresponding to the vector and contains 0 otherwise. To make it clearer, look at the following example.\n Figure 4: One-hot encoding concept  We will converted all the categorical variables (item_condition, shipping, brand_name, cat_1, …, cat_5) to their one-hot encoded vectors. Example code is shown below:\ntemp % as.matrix() %% as.data.frame() %% select(1:6) %% head() # (Intercept) brand_name90 degree by reflex brand_namea bathing ape # 1 1 0 0 # 2 1 0 0 # 3 1 0 0 # 4 1 0 0 # 5 1 0 0 # 6 1 0 0 # brand_namea plus child supply brand_namea+d brand_nameabercrombie \u0026 fitch # 1 0 0 0 # 2 0 0 0 # 3 0 0 0 # 4 0 0 0 # 5 0 0 0 # 6 0 0 0 Since we know our data will probably have a lot of zero values, so we will use the sparse matrix to store the data we have processed. A sparse matrix is a matrix that is comprised of mostly zero values.\n A matrix is sparse if many of its coefficients are zero. The interest in sparsity arises because its exploitation can lead to enormous computational savings and because many large matrix problems that occur in practice are sparse.\n Often you may deal with large matrices that are sparse with a few non-zero elements. In such scenarios, keeping the data in full dense matrix and working with it is not efficient.\nA better way to deal with such sparse matrices is to use the special data structures that allows to store the sparse data efficiently. In R, the matrix package offers great solutions to deal with large sparse matrices.\nLet’s see comparison between dense matrix and sparse matrix in term of the size. Let us create a dummy data and randomly select the indices and make them to contain zeroes.\ndata  Now we have created a vector of million elements, but 90% of the elements are zeros. Let us make it into a dense matrix.\nmat  # [,1] [,2] [,3] [,4] [,5] # [1,] 0.000000 0.0000000 0.000000 0 0.2325384 # [2,] -1.102067 0.6529056 0.000000 0 0.0000000 # [3,] 0.000000 0.0000000 0.000000 0 0.0000000 # [4,] 0.000000 0.0000000 0.000000 0 -0.4474099 # [5,] 0.000000 0.0000000 0.792445 0 0.0000000 We can use R function object.size and check the size of the dense matrix.\nprint(object.size(mat),units=\"auto\") # 7.6 Mb Let us use sparse matrix library to convert the dense matrix to sparse matrix. We can see that elements with no values are shown as dots.\nmat_sparse  # 5 x 5 sparse Matrix of class \"dgCMatrix\" # # [1,] . . . . 0.2325384 # [2,] -1.102067 0.6529056 . . . # [3,] . . . . . # [4,] . . . . -0.4474099 # [5,] . . 0.792445 . . It tells us that our sparse matrix belongs to a class “dgCMatrix”. The sparse matrix type “dgCMatrix” refers to double sparse matrix stored in CSC, Compressed Sparse Column format. A sparse matrix in CSC format is column-oriented format and it is implemented such that the non-zero elements in the columns are sorted into increasing row order. Let us check the size of our sparse matrix.\nprint(object.size(mat_sparse),units=\"auto\") # 1.1 Mb The sparse matrix stores the same data in just about 1 Mb, way more memory efficient than the dense matrix. About seven times smaller than the dense matrix. So lets apply in our data train:\ntic() one_hot_train  # elapsed time is 0.064000 seconds Next, we will change object type of dfm_item_description and dfm_name as a dgCMatrix then combine them as one data that ready for modelling.\nclass(dfm_item_description)  # elapsed time is 0.012000 seconds   Modelling with XGBoost XGBoost was formulated by Tianqi Chen which started as a research project a part of The Distributed Deep Machine Leaning Community (DMLC) group. XGBoost is one of popular algorithm because it has been the winning algorithm in a number of recent Kaggle competitions. XGBoost is a specific implementation of the Gradient Boosting Model which uses more accurate approximations to find the best tree model. XGBoost specifically used a more regularized model formalization to control overfitting, which gives it better perfomance.\nConcept Xgboost works through the system optimization:\n1. Parallelized tree building\nXGBoost approaches the process of sequential tree building using parallelized implementation.\n2. Tree pruning\nUnlike GBM, where tree pruning stops once a negative loss is encountered, XGBoost grows the tree up to max_depth and then prune backward until the improvement in loss function is below a threshold.\n3. Cache awareness and out of core computing\nXGBoost has been designed to efficiently reduce computing time and allocate an optimal usage of memory resources. This is accomplished by cache awareness by allocating internal buffers in each thread to store gradient statistics. Further enhancements such as ‘out-of-core’ computing optimize available disk space while handling big data-frames that do not fit into memory.\n4. Regularization\nThe biggest advantage of XGBoost is regularization. Regularization is a technique used to avoid overfitting in linear and tree based models which limits, regulates or shrink the estimated coefficient towards zero.\n5. Handles missing value\nThis algorithm has important features of handling missing values by learns the best direction for missing values. The missing values are treated them to combine a sparsity-aware split finding algorithm to handle different types of sparsity patterns in data.\n6. Built-in cross validation\nThe algorithm comes with built in cross validation method at each iteration, taking away the need to explicitly program this search and to specify the exact number of boosting iterations required in a single run.\n Parameter There is no benchmark to define the ideal parameters because it will depend on your data and specific problem. XGBoost parameters can defined into three categories:\nFor more detail parameter, the full list of possible parameters is available on the documentation XGBoost Parameters\nGeneral Controls the booster type in the model which eventually drives overall functioning.\nbooster  For regression problems, we can use gbtree and gblinear. In gblinear, it builds a generalized linear model and optimizes it using regularization and gradient descent. The next model will built on residuals generated by previous iterations.\nnthread  To enable parallel computing. The default is the maximum number of threads available.\nverbosity (logging)  Verbosity to display warning messages. The default value is 1 (warning), 0 for silent, 2 for info, and 3 for debug.\n Boosting Parameter Controls the performance of the selected booster\neta (alias learning_rate)  The range of eta is 0 to 1 and default value is 0.3. It controls the maximum number of iterations, the lower eta will generate the slower computation.\ngamma (alias min_split_loss)  The range of gamma is 0 to infinite and default value is 0 (no regularization). The higher gamma is the higher regularization, regularization means penalizing large coefficients that don’t improve the model’s performance.\nmax_depth  Maximum depth of a tree. The range of max_depth is 0 to infinite and default value is 6, increasing this value will make the model more complex and more likely to overfit.\nmin_child_weight  The range of min_child_weight is 0 to infinite and default value is 1. If the leaf node has a minimum sum of instance weight lower than min_child_weight in the tree partition step than the process of splitting the tree will stop growing.\nsubsample  The range of subsample is 0 to 1 and default value is 1. It controls the number of ratio observations to a tree. If the value is set to 0.5 means that XGboost would randomly sample half of the training data prior to growing trees and this will prevent overfitting. subsample will occur once in every boosting iteration.\ncolsample_bytree  The range of colsample_bytree is 0 to 1 and default value is 1. It controls the subsample ratio of columns when constructing each tree.\n  Learning Task Parameter Sets and evaluates the learning process of booster from the given data.\nobjective   reg:squarederror for regression with squared loss binary:logistic for binary classification, output probability  eval_metric  Evaluation metrics for validation data, a default metric will be assigned according to objective:\n rmse for regression logloss for classification   Modelling data_train_xgb  Let’s build a model and implement a few parameters that can affect our model’s performance and training speed.\ntic() model  # elapsed time is 11.889000 seconds model$evaluation_log %% ggplot(aes(x = iter, y = train_rmse)) + geom_line() + labs(title = \"Model evaluation log\", y = \"RMSE data train\", x = \"Iteration\")  From the graph above, can we say that the curve is not yet fully convergent? if yes, then that’s a good sign our model can still be improved by increasing the number of iterations. for those of you who are curious, you can do it by yourself, because it is quite time consuming.\n Model Evaluation pred_train  result_train % select(actual = price) %% mutate(prediction = pred_train) result_train %% sample_n(10) # # A tibble: 10 x 2 # actual prediction #   # 1 15 12.8 # 2 20 18.8 # 3 24 22.7 # 4 24 21.0 # 5 34 30.9 # 6 45 37.9 # 7 14 20.4 # 8 40 31.5 # 9 10 17.5 # 10 26 21.3  Mean Absolute Error  There are many ways of measuring a model’s accuracy. However, the Mean Absolute Error, also known as MAE, is one of the many metrics for summarizing and assessing the quality of a machine learning model, especially for regression task. In MAE the error is calculated as an average of absolute differences between the target values and the predictions.\n\\[MAE = \\frac{1}{n}\\sum_{t=1}^{n}|e_t|\\]\n Root Mean Squared Error  RMSE is a quadratic scoring rule that also measures the average magnitude of the error. It’s the square root of the average of squared differences between prediction and actual observation.\n\\[RMSE = \\sqrt{\\frac{1}{n}\\sum_{t=1}^{n}e_t^2}\\]\n Mean Absolute Percentage Error  MAPE measures the accuracy as a percentage, and can be calculated as the average absolute percent error for each time period minus actual values divided by actual values.\n\\[MAPE = \\frac{100\\%}{n}\\sum_{t=1}^{n}\\left |\\frac{e_t}{y_t}\\right|\\]\nrmse_train  # [1] 7.225152 result_train %% sample_n(150) %% mutate(no = 1:150) %% pivot_longer(cols = c(actual, prediction), names_to = \"label\") %% ggplot(aes(y = value)) + geom_line(aes(x = no, col = label)) + scale_color_manual(values = c(\"firebrick\", \"dodgerblue\")) + labs(x = \"Row indices\", y = \"Product price\", title = \"Comparasion actual vs prediction price\", subtitle = \"Sample of data train\", caption = paste(\"RMSE:\", round(rmse_train, 2))) + theme(legend.position = \"bottom\")  Predict on Test Data After develop model machine learning on train data set, what is the next step?\n Pick a final model based on an evaluation criteria (the best accurate model)\n Obtain an unbiased measurement of the model’s accuracy by predicting on test set data  The idea of obtaining an unbiased estimate of our model’s out-of-sample performance is an important one as it is often the case that the in-sample error (the error you obtain from running your algorithm on the dataset it was trained on) is optimistic and tuned / adapted in a particular way to minimize the error in the training sample.\nTherefore - the in-sample error is not a good representation or indication of how our model will perform when it is applied on unseen data.\nAnother way to think about is that our training data has two components to it: signal and noise. The goal of machine learning is to identify the signal but be robust enough to avoid modeling the noise component of the data.\nWhen we build a model, we want to know that our model is not overly adapted to the data set to the point that it captures both the signal and noise, a phenomenon known as “overfitting”. When our model is guilty of overfitting, the in-sample accuracy will be very high (in some cases ~100%) but fail to perform on unseen data. The idea is to strike the right balance between accuracy (don’t underfit) and robustness to noise (don’t overfit).\nData Preparation Let’s us import and do some data pre-processing like we did before in training dataset.\ndata_test  # Rows: 1,595 # Columns: 8 # $ train_id  3429, 8191, 9731, 822, 2346, 1330, 8172, 5997, 6514,… # $ name  \"Marc Jacobs lipgloss Sugar Sugar\", \"Southern Shirt … # $ item_condition_id  1, 3, 1, 1, 1, 3, 2, 3, 3, 2, 1, 1, 1, 2, 2, 1, 3, 3… # $ category_name  \"Beauty/Makeup/Lips\", \"Women/Coats \u0026 Jackets/Fleece … # $ brand_name  \"MARC JACOBS\", NA, NA, \"Louis Vuitton\", \"Mega Bloks\"… # $ price  11, 66, 18, 39, 24, 305, 12, 5, 14, 350, 10, 8, 39, … # $ shipping  1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 1, 1, 0, 1… # $ item_description  \"Free shipping Brand new / travel size (no box) Shad… Recall, previously we made a custom function to prepare our unseen data. So, its time we use it on test data set. its look very straightforward, we just simply call the function and set the desired data.\ndata_test  # # A tibble: 6 x 12 # train_id name item_condition_… cat_1 cat_2 cat_3 cat_4 cat_5 brand_name price #           # 1 3429 marc… 1 beau… make… lips unkn… unkn… marc jaco… 11 # 2 8191 sout… 3 women coat… flee… unkn… unkn… unknown 66 # 3 9731 clip… 1 women wome… hair… unkn… unkn… unknown 18 # 4 822 loui… 1 women wome… wall… unkn… unkn… louis vui… 39 # 5 2346 turt… 1 kids toys buil… unkn… unkn… mega bloks 24 # 6 1330 ipho… 3 elec… cell… cell… unkn… unkn… apple 305 # # … with 2 more variables: shipping , item_description   Document Feature Matrix Here are the same things like we did on training set data. Build a document feature matrix on unseen data. However, there are some adjustments later regarding to the dictionary/corpus. Right now, take your time to remembering the meaning of each command we used.\ntic() dfm_item_description_test  # elapsed time is 0.313000 seconds tic() dfm_name_test  # elapsed time is 0.153000 seconds tic() data_test_sparse  # elapsed time is 0.048000 seconds class(dfm_item_description_test)  Combine data one-hot encoding, sparse matrix item description, and sparse matrix name product of our test data set.\ntic() data_test_sparse  # elapsed time is 0.020000 seconds  Features Matching Classic problem when dealing with text data predictors is, thare are words that do not appear in new data (test data set). So the dimension between training set and testing set data is different. if we force the model to predict the data, obviously it will error.\ndata_train_sparse@Dim # [1] 7995 22754 data_test_sparse@Dim # [1] 1593 9034 Look, total training data columns is 22756 while the test data only 9035. Of course, we need to equate the features of training set and testing set data. First we need to check, which training data columns is not in the test data? following are the commands we used.\nselect_empty  Then, we generate a new sparse matrix from the result above. Replace all missing value with 0, because in fact the test data does not contain some of these features.\ntic() data_test_empty % replace(is.na(.), 0) %% as.matrix() %% as(\"sparseMatrix\") toc() # elapsed time is 13.025000 seconds Lets combine the data and check the dimension again.\ndata_test_sparse  # [1] 1593 22754 We can see that the column size is same with training data. Not finished yet, we need to match the order of test data columns as in the training set data. Why? this due to the functional requirements of the XGBoost model object it need the same order of columns as learned. Of course this will take quite a while to process.\ndf_test_complete % as.matrix() %% as.data.frame() data_test_sparse % as.matrix() %% as(\"sparseMatrix\") rownames(data_test_sparse)  Do not forget to convert as xgb DMatrix.\ndata_test_xgb   Model Evaluation Data Test We have finished preparing new data. Now, we can move to prediction step and evaluation model. Let’s use the generic predict() function to predict with the model we’ve constructed, on the test set data to get a sense of it’s performance on unseen data:\npred_test  result_test % select(actual = price) %% mutate(prediction = pred_test) result_test # # A tibble: 1,593 x 2 # actual prediction #   # 1 11 14.2 # 2 66 60.1 # 3 18 24.3 # 4 39 48.1 # 5 24 25.5 # 6 305 318. # 7 12 18.6 # 8 5 13.4 # 9 14 18.0 # 10 350 254. # # … with 1,583 more rows rmse_test  # [1] 13.79102 result_test %% sample_n(150) %% mutate(no = 1:150) %% pivot_longer(cols = c(actual, prediction), names_to = \"label\") %% ggplot(aes(y = value)) + geom_line(aes(x = no, col = label)) + scale_color_manual(values = c(\"firebrick\", \"dodgerblue\")) + labs( x = \"Row indices\", y = \"Product price\", title = \"Comparasion actual vs prediction price\", subtitle = \"Sample of data test\", caption = paste(\"RMSE:\", round(rmse_test, 2)) ) + theme(legend.position = \"bottom\") A 13.79 RMSE on unseen data! it seems the model is good enough to predict prices on the new data.\n    ",
+  "wordCount" : "4997",
+  "inLanguage": "en",
+  "image":"http://ahmadhusain.in/img/mercari.png","datePublished": "2021-06-22T00:00:00Z",
+  "dateModified": "2021-06-22T00:00:00Z",
+  "author":{
+    "@type": "Person",
+    "name": "Ahmad Husain"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "http://ahmadhusain.in/post/2021-06-22-mercari-price-suggestion/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Husain's Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "http://ahmadhusain.in/img/r-icon.png"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+<noscript>
+    <style type="text/css">
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: #1d1e20;
+                --entry: #2e2e33;
+                --primary: rgba(255, 255, 255, 0.84);
+                --secondary: rgba(255, 255, 255, 0.56);
+                --tertiary: rgba(255, 255, 255, 0.16);
+                --content: rgba(255, 255, 255, 0.74);
+                --hljs-bg: #2e2e33;
+                --code-bg: #37383e;
+                --border: #333;
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="http://ahmadhusain.in/" accesskey="h" title="Husain&#39;s Blog (Alt + H)">Husain&#39;s Blog</a>
+            <span class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+                <ul class="lang-switch"><li>|</li>
+                    <li>
+                        <a href="http://ahmadhusain.in/id/" title="Indonesian"
+                            aria-label="Indonesian">Indonesian</a>
+                    </li>
+                </ul>
+            </span>
+        </div>
+        <ul id="menu" onscroll="menu_on_scroll()">
+            <li>
+                <a href="http://ahmadhusain.in/search/" title="Search (Alt &#43; /)" accesskey=/>
+                    <span>Search</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://ahmadhusain.in/tags/" title="Tags">
+                    <span>Tags</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <div class="breadcrumbs"><a href="http://ahmadhusain.in/">Home</a>&nbsp;»&nbsp;<a href="http://ahmadhusain.in/post/">Posts</a></div>
+    <h1 class="post-title">
+      Mercari Price Suggestion
+    </h1>
+    <div class="post-meta">June 22, 2021&nbsp;·&nbsp;24 min&nbsp;·&nbsp;Ahmad Husain
+</div>
+  </header> 
+<figure class="entry-cover"><img loading="lazy" src="http://ahmadhusain.in/img/mercari.png" alt="">
+        
+</figure><div class="toc">
+    <details >
+        <summary accesskey="c" title="(Alt + C)">
+            <div class="details">Table of Contents</div>
+        </summary>
+        <div class="inner"><ul>
+                <li>
+                    <a href="#" aria-label="Mercari Challenge">Mercari Challenge</a><ul>
+                        
+                <li>
+                    <a href="#" aria-label="Exploratory Data Analysis">Exploratory Data Analysis</a></li>
+                <li>
+                    <a href="#" aria-label="Data Preparation">Data Preparation</a><ul>
+                        
+                <li>
+                    <a href="#" aria-label="Separate Category Name">Separate Category Name</a></li>
+                <li>
+                    <a href="#" aria-label="Document Feature Matrix">Document Feature Matrix</a></li>
+                <li>
+                    <a href="#" aria-label="One-hot Encoding">One-hot Encoding</a></li></ul>
+                </li>
+                <li>
+                    <a href="#" aria-label="Modelling with XGBoost">Modelling with XGBoost</a><ul>
+                        
+                <li>
+                    <a href="#" aria-label="Concept">Concept</a></li>
+                <li>
+                    <a href="#" aria-label="Parameter">Parameter</a><ul>
+                        
+                <li>
+                    <a href="#" aria-label="General">General</a></li>
+                <li>
+                    <a href="#" aria-label="Boosting Parameter">Boosting Parameter</a></li></ul>
+                </li>
+                <li>
+                    <a href="#" aria-label="Learning Task Parameter">Learning Task Parameter</a></li>
+                <li>
+                    <a href="#" aria-label="Modelling">Modelling</a></li>
+                <li>
+                    <a href="#" aria-label="Model Evaluation">Model Evaluation</a></li>
+                <li>
+                    <a href="#" aria-label="Predict on Test Data">Predict on Test Data</a><ul>
+                        
+                <li>
+                    <a href="#" aria-label="Data Preparation">Data Preparation</a></li>
+                <li>
+                    <a href="#" aria-label="Document Feature Matrix">Document Feature Matrix</a></li>
+                <li>
+                    <a href="#" aria-label="Features Matching">Features Matching</a></li>
+                <li>
+                    <a href="#" aria-label="Model Evaluation Data Test">Model Evaluation Data Test</a>
+                </li>
+            </ul>
+            </li>
+            </ul>
+            </li>
+            </ul>
+            </li>
+            </ul>
+        </div>
+    </details>
+</div>
+
+  <div class="post-content"><script src="http://ahmadhusain.in/post/2021-06-22-mercari-price-suggestion/index_files/header-attrs/header-attrs.js"></script>
+
+<div id="mercari-challenge" class="section level1">
+<h1>Mercari Challenge</h1>
+<p><a href="https://www.mercari.com/">Mercari</a> is Japan’s biggest community-powered shopping website. With the aim of realizing a society where global resources are used carefully and where everyone can live richly, the company has developed a flea market application ‘Mercari’ in Japan and the United States that allows individuals to easily and safely buy and sell goods. Mercari’s challenge is to build an algorithm that automatically suggests the right product prices to sellers on its app.</p>
+<p>Predicting the price of a product is a tough challenge since very similar products having minute differences such as different brand names, additional specifications, quality, demand of the product, etc. can have very different prices. For example, one of these sweaters cost <code>$335</code> and the other cost <code>$9.99</code>. Can you guess which one’s which?</p>
+<div class="figure" style="text-align: center"><span id="fig:unnamed-chunk-1"></span>
+<img src="img/mercari-kaggle.png" alt="Image source: https://www.kaggle.com/c/mercari-price-suggestion-challenge/overview" width="600px" />
+<p class="caption">
+Figure 1: Image source: <a href="https://www.kaggle.com/c/mercari-price-suggestion-challenge/overview" class="uri">https://www.kaggle.com/c/mercari-price-suggestion-challenge/overview</a>
+</p>
+</div>
+<p>Price prediction gets even more difficult when there is a huge range of products, which is common with most of the online shopping platforms. Mercari’s sellers are allowed to list almost anything on the app. It’s highly challenging to predict the price of almost anything that is listed on online platforms. Lets start to read the data first.</p>
+<pre class="r"><code>library(tidyverse)
+library(data.table)
+library(quanteda)
+library(tictoc)
+library(Matrix)
+library(xgboost)
+library(MLmetrics)
+library(lubridate)
+library(pracma)</code></pre>
+<pre class="r"><code>data_train &lt;- read_csv(&quot;data/mercari/data-train.csv&quot;)
+
+glimpse(data_train)</code></pre>
+<pre><code>#&gt; Rows: 8,000
+#&gt; Columns: 8
+#&gt; $ train_id          &lt;dbl&gt; 3785, 502, 3429, 3695, 4089, 7885, 3051, 8191, 8661,…
+#&gt; $ name              &lt;chr&gt; &quot;Crystal Flower .925 SP Earrings Bundle&quot;, &quot;NEW IN BO…
+#&gt; $ item_condition_id &lt;dbl&gt; 2, 1, 1, 2, 1, 2, 1, 3, 2, 1, 1, 1, 1, 1, 1, 2, 3, 1…
+#&gt; $ category_name     &lt;chr&gt; &quot;Women/Jewelry/Earrings&quot;, &quot;Electronics/Cell Phones &amp;…
+#&gt; $ brand_name        &lt;chr&gt; NA, &quot;Belkin&quot;, &quot;MARC JACOBS&quot;, &quot;PINK&quot;, NA, &quot;Nautica&quot;, …
+#&gt; $ price             &lt;dbl&gt; 5, 15, 11, 13, 10, 10, 124, 66, 10, 7, 18, 39, 46, 3…
+#&gt; $ shipping          &lt;dbl&gt; 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0…
+#&gt; $ item_description  &lt;chr&gt; &quot;Perfect for Spring! Bundle of 2 pair crystal flower…</code></pre>
+<p>The files consist of product listings. Originally the total size of the data is 1.03 GB. But for demo needs we reduce the number of product to 8000 pieces. Both train and test files have the following data fields:</p>
+<ul>
+<li><code>name</code>: the title of the listing. Note that we have cleaned the data to remove text that look like prices (e.g. $20) to avoid leakage. These removed prices are represented as [rm]</li>
+<li><code>item_condition_id</code>: the condition of the items provided by the seller</li>
+<li><code>category_name</code>: category of the listing</li>
+<li><code>brand_name</code></li>
+<li><code>price</code>: the price that the item was sold for. This is the target variable that you will predict. The unit is USD. This column doesn’t exist in test.tsv since that is what you will predict.</li>
+<li><code>shipping</code>: 1 if shipping fee is paid by seller and 0 by buyer</li>
+<li><code>item_description</code>: the full description of the item. Note that we have cleaned the data to remove text that look like prices (e.g. $20) to avoid leakage. These removed prices are represented as [rm]</li>
+</ul>
+<div id="exploratory-data-analysis" class="section level2">
+<h2>Exploratory Data Analysis</h2>
+<pre class="r"><code>head(data_train)</code></pre>
+<pre><code>#&gt; # A tibble: 6 x 8
+#&gt;   train_id name     item_condition_id category_name    brand_name price shipping
+#&gt;      &lt;dbl&gt; &lt;chr&gt;                &lt;dbl&gt; &lt;chr&gt;            &lt;chr&gt;      &lt;dbl&gt;    &lt;dbl&gt;
+#&gt; 1     3785 Crystal…                 2 Women/Jewelry/E… &lt;NA&gt;           5        1
+#&gt; 2      502 NEW IN …                 1 Electronics/Cel… Belkin        15        1
+#&gt; 3     3429 Marc Ja…                 1 Beauty/Makeup/L… MARC JACO…    11        1
+#&gt; 4     3695 Vs pink…                 2 Women/Underwear… PINK          13        1
+#&gt; 5     4089 Brand n…                 1 Women/Other/Oth… &lt;NA&gt;          10        1
+#&gt; 6     7885 Mens XX…                 2 Men/Tops/T-shir… Nautica       10        0
+#&gt; # … with 1 more variable: item_description &lt;chr&gt;</code></pre>
+<p>For the next step, we will do some Exploratory Data Analysis (EDA) which aims to gain insight and improve our understanding of data by looking at a more detailed perspective, based on our business question. The first one we want to deep dive is price variable. How is it distributed? is it any outliers or anomalies? We can utilize the simple function called <code>summary()</code> to get statistics information.</p>
+<pre class="r"><code>data_train %&gt;% 
+  pull(price) %&gt;% 
+  summary()</code></pre>
+<pre><code>#&gt;    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+#&gt;    0.00   10.00   17.00   26.59   29.00 1506.00</code></pre>
+<p>From the result above, some products cost <code>$0</code> and the other ones has extreme product prices that are far from the distribution. There seems to be an input error in the data which a price of <code>$0</code>. So we will remove the product with these conditions.</p>
+<pre class="r"><code>data_train &lt;- data_train %&gt;% 
+  filter(price != 0)</code></pre>
+</div>
+<div id="data-preparation" class="section level2">
+<h2>Data Preparation</h2>
+<p>Next, we will prepare all string data type. If we are dealing or working with string data as a predictor of machine learning model, and we know the ‘R case sensitive’ characteristic, we need to convert all character to lower case format. So the word <em>Algoritma</em> and <em>algoritma</em> has the same meaning for our program. We can simply use <code>mutate_if(is.character, tolower)</code> syntax on our data.</p>
+<p>The <em>item description</em> column contains blank and <em>no decription yet</em> which is the same meaning. So lets convert it to a single word <code>null</code>.</p>
+<pre class="r"><code>data_train &lt;- data_train %&gt;%
+  mutate_if(is.character, tolower) %&gt;%
+  mutate(
+    item_description = ifelse(
+      item_description == &quot;&quot; | item_description == &quot;no description yet&quot;,
+      &quot;null&quot;,
+      item_description
+    )
+  )
+
+head(data_train, 6)</code></pre>
+<pre><code>#&gt; # A tibble: 6 x 8
+#&gt;   train_id name     item_condition_id category_name    brand_name price shipping
+#&gt;      &lt;dbl&gt; &lt;chr&gt;                &lt;dbl&gt; &lt;chr&gt;            &lt;chr&gt;      &lt;dbl&gt;    &lt;dbl&gt;
+#&gt; 1     3785 crystal…                 2 women/jewelry/e… &lt;NA&gt;           5        1
+#&gt; 2      502 new in …                 1 electronics/cel… belkin        15        1
+#&gt; 3     3429 marc ja…                 1 beauty/makeup/l… marc jaco…    11        1
+#&gt; 4     3695 vs pink…                 2 women/underwear… pink          13        1
+#&gt; 5     4089 brand n…                 1 women/other/oth… &lt;NA&gt;          10        1
+#&gt; 6     7885 mens xx…                 2 men/tops/t-shir… nautica       10        0
+#&gt; # … with 1 more variable: item_description &lt;chr&gt;</code></pre>
+<div id="separate-category-name" class="section level3">
+<h3>Separate Category Name</h3>
+<p>Observe that the entries of <code>category_name</code> are separated into subcategories by the ‘/’ symbol. How many subcategories are there? we can run following code:</p>
+<pre class="r"><code>temp_text &lt;- &quot;men/tops/t-shirts&quot;
+
+str_count(temp_text, pattern = &quot;/&quot;)</code></pre>
+<pre><code>#&gt; [1] 2</code></pre>
+<p>We use <code>str_count</code> function from stringr package to count the number of matches in a string. With the sample text above, we get the result two, which mean the sample consist of three subcategories (‘result + 1’). Let’s apply to our <code>category_name</code> column.</p>
+<pre class="r"><code>data_train %&gt;% 
+  pull(category_name) %&gt;% 
+  str_count(pattern = &quot;/&quot;) %&gt;% 
+  unique()</code></pre>
+<pre><code>#&gt; [1]  2  4 NA  3</code></pre>
+<p>The output shows the maximum number of subcategories is five. Also there are entries which no have values which need to convert as ‘unknown’ in the next step.</p>
+<p>We want record each subcategories name as a single column. Then, we prepare new columns names and use <code>separate()</code> function to separate a character column into multiple columns with a ‘/’ separator. zTo make it clear how the function works, we will use sample data and only focus on ‘category_name’.</p>
+<pre class="r"><code>subcat &lt;- c(&#39;cat_1&#39;, &#39;cat_2&#39;, &#39;cat_3&#39;, &#39;cat_4&#39;,  &#39;cat_5&#39;)
+
+temp_category &lt;- data_train %&gt;% 
+  select(name, category_name) %&gt;% 
+  separate(col = category_name, into = subcat, sep = &quot;/&quot;, remove = FALSE)
+
+tail(temp_category)</code></pre>
+<pre><code>#&gt; # A tibble: 6 x 7
+#&gt;   name          category_name             cat_1  cat_2     cat_3     cat_4 cat_5
+#&gt;   &lt;chr&gt;         &lt;chr&gt;                     &lt;chr&gt;  &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt;
+#&gt; 1 body control  beauty/skin care/body     beauty skin care body      &lt;NA&gt;  &lt;NA&gt; 
+#&gt; 2 tide pods bu… home/cleaning supplies/h… home   cleaning… househol… &lt;NA&gt;  &lt;NA&gt; 
+#&gt; 3 xs vs pink w… women/athletic apparel/t… women  athletic… tracksui… &lt;NA&gt;  &lt;NA&gt; 
+#&gt; 4 apple iphone… electronics/cell phones … elect… cell pho… cell pho… &lt;NA&gt;  &lt;NA&gt; 
+#&gt; 5 butterfly wi… home/home décor/home déc… home   home déc… home déc… &lt;NA&gt;  &lt;NA&gt; 
+#&gt; 6 crystal clea… electronics/cell phones … elect… cell pho… cases, c… &lt;NA&gt;  &lt;NA&gt;</code></pre>
+<p>Then, lest apply to the original data.</p>
+<pre class="r"><code>data_train &lt;- data_train %&gt;% 
+  separate(col = category_name, into = subcat, sep = &quot;/&quot;)</code></pre>
+<p>Next, we will replace empty entries in data with ‘unknown’ character. Supposedly, if we check again with <code>anyNA()</code> function, there are no more NA data. Also, for the sake of decreasing computation cost, we will convert some of categorical columns to factor type.</p>
+<pre class="r"><code>data_train &lt;- data_train %&gt;% 
+  replace(is.na(.), &quot;unknown&quot;) %&gt;% 
+  mutate(brand_name = ifelse(brand_name == &quot;&quot;, &quot;unknwon&quot;, brand_name)) %&gt;% 
+  mutate_at(.vars = c(&quot;item_condition_id&quot;, &quot;brand_name&quot;, &quot;shipping&quot;, subcat), as.factor)
+
+anyNA(data_train)</code></pre>
+<pre><code>#&gt; [1] FALSE</code></pre>
+<p>We can compile all data preparation above as a reproducible function. If any new data input, we no need to execute line by line with the same command, but simply apply the function we created. We’ll apply this function to test dataset later.</p>
+<pre class="r"><code>data_prep &lt;- function(data){
+  data_clean &lt;- data %&gt;%
+    filter(price != 0) %&gt;%
+    mutate_if(is.character, tolower) %&gt;%
+    mutate(
+      item_description = ifelse(
+        item_description == &quot;&quot; | item_description == &quot;no description yet&quot;,
+        &quot;null&quot;,
+        item_description
+      )
+    ) %&gt;%
+    separate(col = category_name, into = subcat, sep = &quot;/&quot;) %&gt;%
+    replace(is.na(.), &quot;unknown&quot;) %&gt;%
+    mutate(brand_name = ifelse(brand_name == &quot;&quot;, &quot;unknwon&quot;, brand_name)) %&gt;%
+    mutate_at(.vars = c(&quot;item_condition_id&quot;, &quot;brand_name&quot;, &quot;shipping&quot;, subcat),
+              as.factor)
+  
+  return(data_clean)
+}</code></pre>
+</div>
+<div id="document-feature-matrix" class="section level3">
+<h3>Document Feature Matrix</h3>
+<p>Our task is to predict product price from all information entered by the merchant included item description, name, and category. To do so, we mine features from those textual data and fit to a machine learning model. Following are some approach to make our program understand every single words that entries to the system:</p>
+<ol style="list-style-type: decimal">
+<li>Document Feature Matrix</li>
+<li>One Hot Encoding</li>
+<li>Data Sparse Matrix</li>
+</ol>
+<p>Document Feature Matrix or familiar called as Document Term Matrix is an important representation for text analysis. Each row of the matrix is a document vector which is our each product, and the column represent every term in the entire dictionary.</p>
+<p>Some documents may not contain certain terms, so these matrix are sparse. The value in each cell of the matrix is the <strong>frequency term</strong>. This value is often a weighted term frequency, typically using <strong>Term Frequency-Inverse Document Frequency</strong> (TF-IDF)</p>
+<p><strong>Why TFIDF?</strong></p>
+<p>Term Frequency approach to determine the weight of each term in a document based on the number of occurrences in the document. The greater the number of occurrences (high TF), the greater its weight in the document. But, there are not important words that appear several time in the document which can be biased during modelling.</p>
+<p>So Inverse Document Frequency approach come up to solve that problem. Inverse Document Frequency (IDF) to reduce the dominance of words that often appear in various documents. This step is necessary because words that appear a lot in various document can be considered as general terms so the value will set to ‘not important’. TF-IDF to measure how important a word is in the corpus.</p>
+<pre class="r"><code>build_dfm &lt;- function(x, n = 1) {
+  
+  mat &lt;- dfm(
+    x,
+    tolower = TRUE,
+    remove_punct = TRUE,
+    remove_symbols = TRUE,
+    remove_numbers = TRUE,
+    remove = stopwords(&quot;english&quot;),
+    ngrams = n
+  )
+
+  mat &lt;- dfm_tfidf(mat)
+  
+  return(mat)
+  
+}</code></pre>
+<p>After we do Document Feature Matrix for column <code>name</code> and <code>item_description</code>, we combine them into one data matrix. So imagine if the <code>nike</code> column contains the word ‘nike’ and the <code>item_description</code> column also contains the word ‘nike’, the result may be misleading. For instance, please look the sample below:</p>
+<div class="figure" style="text-align: center"><span id="fig:unnamed-chunk-14"></span>
+<img src="img/dfm-original-data.png" alt="Original sample data" width="600px" />
+<p class="caption">
+Figure 2: Original sample data
+</p>
+</div>
+<div class="figure" style="text-align: center"><span id="fig:unnamed-chunk-15"></span>
+<img src="img/join-dfm.png" alt="DFM result" width="800px" />
+<p class="caption">
+Figure 3: DFM result
+</p>
+</div>
+<p>It’s too difficult for our machine to understand the word ‘nike’ which is the product name, and the word ‘nike’ as a item description. So the solution is to paste the context of each column to the rest of the features, to define a new colnames more unique.</p>
+<pre class="r"><code>tic()
+dfm_item_description &lt;- build_dfm(x = data_train$item_description)
+dfm_item_description@Dimnames[[2]] &lt;- paste0(&quot;desc_&quot;, dfm_item_description@Dimnames[[2]])
+toc()</code></pre>
+<pre><code>#&gt; elapsed time is 0.846000 seconds</code></pre>
+<pre class="r"><code>tic()
+dfm_name &lt;- build_dfm(x = data_train$name)
+dfm_name@Dimnames[[2]] &lt;- paste0(&quot;name_&quot;, dfm_name@Dimnames[[2]])
+toc()</code></pre>
+<pre><code>#&gt; elapsed time is 0.381000 seconds</code></pre>
+</div>
+<div id="one-hot-encoding" class="section level3">
+<h3>One-hot Encoding</h3>
+<p>Categorical data refers to variables that are made up of label values, for example, a “performance level” variable could have the values “low“, “medium, and “high”. One-hot encoding is a scheme of vectorization where each category in a categorical variable is converted into a vector of length equal to the number of data points. The vector contains a value of 1 against each data point that belongs to the category corresponding to the vector and contains 0 otherwise. To make it clearer, look at the following example.</p>
+<div class="figure" style="text-align: center"><span id="fig:unnamed-chunk-17"></span>
+<img src="img/one-hot.png" alt="One-hot encoding concept" width="600px" />
+<p class="caption">
+Figure 4: One-hot encoding concept
+</p>
+</div>
+<p>We will converted all the categorical variables (item_condition, shipping, brand_name, cat_1, …, cat_5) to their one-hot encoded vectors. Example code is shown below:</p>
+<pre class="r"><code>temp &lt;- sparse.model.matrix(~ brand_name + cat_1 + cat_2 + cat_3 + cat_4 + cat_5, 
+                            data = data_train[1:10, c(&quot;item_condition_id&quot;, &quot;brand_name&quot;, &quot;shipping&quot;, subcat)])
+
+temp %&gt;% 
+  as.matrix() %&gt;% 
+  as.data.frame() %&gt;% 
+  select(1:6) %&gt;% 
+  head()</code></pre>
+<pre><code>#&gt;   (Intercept) brand_name90 degree by reflex brand_namea bathing ape
+#&gt; 1           1                             0                       0
+#&gt; 2           1                             0                       0
+#&gt; 3           1                             0                       0
+#&gt; 4           1                             0                       0
+#&gt; 5           1                             0                       0
+#&gt; 6           1                             0                       0
+#&gt;   brand_namea plus child supply brand_namea+d brand_nameabercrombie &amp; fitch
+#&gt; 1                             0             0                             0
+#&gt; 2                             0             0                             0
+#&gt; 3                             0             0                             0
+#&gt; 4                             0             0                             0
+#&gt; 5                             0             0                             0
+#&gt; 6                             0             0                             0</code></pre>
+<p>Since we know our data will probably have a lot of zero values, so we will use the sparse matrix to store the data we have processed. A sparse matrix is a matrix that is comprised of mostly zero values.</p>
+<blockquote>
+<p>A matrix is sparse if many of its coefficients are zero. The interest in sparsity arises because its exploitation can lead to enormous computational savings and because many large matrix problems that occur in practice are sparse.</p>
+</blockquote>
+<p>Often you may deal with large matrices that are sparse with a few non-zero elements. In such scenarios, keeping the data in full dense matrix and working with it is not efficient.</p>
+<p>A better way to deal with such sparse matrices is to use the special data structures that allows to store the sparse data efficiently. In R, the <code>matrix</code> package offers great solutions to deal with large sparse matrices.</p>
+<p>Let’s see comparison between dense matrix and sparse matrix in term of the size. Let us create a dummy data and randomly select the indices and make them to contain zeroes.</p>
+<pre class="r"><code>data &lt;- rnorm(1e6)
+zero_index &lt;- sample(1e6)[1:9e5]
+data[zero_index] &lt;- 0</code></pre>
+<p>Now we have created a vector of million elements, but 90% of the elements are zeros. Let us make it into a dense matrix.</p>
+<pre class="r"><code>mat &lt;- matrix(data, ncol=1000)
+mat[1:5,1:5]</code></pre>
+<pre><code>#&gt;           [,1]      [,2]     [,3] [,4]       [,5]
+#&gt; [1,]  0.000000 0.0000000 0.000000    0  0.2325384
+#&gt; [2,] -1.102067 0.6529056 0.000000    0  0.0000000
+#&gt; [3,]  0.000000 0.0000000 0.000000    0  0.0000000
+#&gt; [4,]  0.000000 0.0000000 0.000000    0 -0.4474099
+#&gt; [5,]  0.000000 0.0000000 0.792445    0  0.0000000</code></pre>
+<p>We can use R function object.size and check the size of the dense matrix.</p>
+<pre class="r"><code>print(object.size(mat),units=&quot;auto&quot;)</code></pre>
+<pre><code>#&gt; 7.6 Mb</code></pre>
+<p>Let us use sparse matrix library to convert the dense matrix to sparse matrix. We can see that elements with no values are shown as dots.</p>
+<pre class="r"><code>mat_sparse &lt;- Matrix(mat, sparse = TRUE)
+mat_sparse[1:5, 1:5]</code></pre>
+<pre><code>#&gt; 5 x 5 sparse Matrix of class &quot;dgCMatrix&quot;
+#&gt;                                               
+#&gt; [1,]  .        .         .        .  0.2325384
+#&gt; [2,] -1.102067 0.6529056 .        .  .        
+#&gt; [3,]  .        .         .        .  .        
+#&gt; [4,]  .        .         .        . -0.4474099
+#&gt; [5,]  .        .         0.792445 .  .</code></pre>
+<p>It tells us that our sparse matrix belongs to a class “dgCMatrix”. The sparse matrix type “dgCMatrix” refers to double sparse matrix stored in CSC, Compressed Sparse Column format. A sparse matrix in CSC format is column-oriented format and it is implemented such that the non-zero elements in the columns are sorted into increasing row order. Let us check the size of our sparse matrix.</p>
+<pre class="r"><code>print(object.size(mat_sparse),units=&quot;auto&quot;)</code></pre>
+<pre><code>#&gt; 1.1 Mb</code></pre>
+<p>The sparse matrix stores the same data in just about 1 Mb, way more memory efficient than the dense matrix. About seven times smaller than the dense matrix. So lets apply in our data train:</p>
+<pre class="r"><code>tic()
+one_hot_train &lt;- sparse.model.matrix(
+    ~ item_condition_id + shipping + brand_name +
+    cat_1 + cat_2 + cat_3 + cat_4 + cat_5,
+    data = data_train[c(&quot;item_condition_id&quot;, &quot;brand_name&quot;, &quot;shipping&quot;, subcat)])
+toc()</code></pre>
+<pre><code>#&gt; elapsed time is 0.064000 seconds</code></pre>
+<p>Next, we will change object type of <code>dfm_item_description</code> and <code>dfm_name</code> as a dgCMatrix then combine them as one data that ready for modelling.</p>
+<pre class="r"><code>class(dfm_item_description) &lt;- class(one_hot_train)
+class(dfm_name) &lt;- class(one_hot_train)
+
+tic()
+data_train_sparse &lt;- cbind(
+        one_hot_train, 
+        dfm_item_description,
+        dfm_name)
+
+rownames(data_train_sparse) &lt;- NULL
+toc()</code></pre>
+<pre><code>#&gt; elapsed time is 0.012000 seconds</code></pre>
+</div>
+</div>
+<div id="modelling-with-xgboost" class="section level2">
+<h2>Modelling with XGBoost</h2>
+<p>XGBoost was formulated by Tianqi Chen which started as a research project a part of The <em>Distributed Deep Machine Leaning Community (DMLC)</em> group. XGBoost is one of popular algorithm because it has been the winning algorithm in a number of recent Kaggle competitions. XGBoost is a specific implementation of the Gradient Boosting Model which uses more accurate approximations to find the best tree model. XGBoost specifically used a more regularized model formalization to control overfitting, which gives it better perfomance.</p>
+<div id="concept" class="section level3">
+<h3>Concept</h3>
+<p>Xgboost works through the system optimization:</p>
+<p><img src="img/xgboost.png" width="600px" style="display: block; margin: auto;" /></p>
+<p><strong>1. Parallelized tree building</strong></p>
+<p>XGBoost approaches the process of sequential tree building using parallelized implementation.</p>
+<p><strong>2. Tree pruning</strong></p>
+<p>Unlike GBM, where tree pruning stops once a negative loss is encountered, XGBoost grows the tree up to <code>max_depth</code> and then prune backward until the improvement in loss function is below a threshold.</p>
+<p><strong>3. Cache awareness and out of core computing</strong></p>
+<p>XGBoost has been designed to efficiently reduce computing time and allocate an optimal usage of memory resources. This is accomplished by cache awareness by allocating internal buffers in each thread to store gradient statistics. Further enhancements such as ‘out-of-core’ computing optimize available disk space while handling big data-frames that do not fit into memory.</p>
+<p><strong>4. Regularization</strong></p>
+<p>The biggest advantage of XGBoost is regularization. Regularization is a technique used to avoid overfitting in linear and tree based models which limits, regulates or shrink the estimated coefficient towards zero.</p>
+<p><strong>5. Handles missing value</strong></p>
+<p>This algorithm has important features of handling missing values by learns the best direction for missing values. The missing values are treated them to combine a sparsity-aware split finding algorithm to handle different types of sparsity patterns in data.</p>
+<p><strong>6. Built-in cross validation</strong></p>
+<p>The algorithm comes with built in cross validation method at each iteration, taking away the need to explicitly program this search and to specify the exact number of boosting iterations required in a single run.</p>
+</div>
+<div id="parameter" class="section level3">
+<h3>Parameter</h3>
+<p>There is no benchmark to define the ideal parameters because it will depend on your data and specific problem. XGBoost parameters can defined into three categories:</p>
+<p>For more detail parameter, the full list of possible parameters is available on the documentation <a href="https://xgboost.readthedocs.io/en/latest/parameter.html">XGBoost Parameters</a></p>
+<div id="general" class="section level4">
+<h4>General</h4>
+<p>Controls the booster type in the model which eventually drives overall functioning.</p>
+<ol style="list-style-type: decimal">
+<li><code>booster</code></li>
+</ol>
+<p>For regression problems, we can use <code>gbtree</code> and <code>gblinear</code>. In <code>gblinear</code>, it builds a generalized linear model and optimizes it using regularization and gradient descent. The next model will built on residuals generated by previous iterations.</p>
+<ol start="2" style="list-style-type: decimal">
+<li><code>nthread</code></li>
+</ol>
+<p>To enable parallel computing. The default is the maximum number of threads available.</p>
+<ol start="3" style="list-style-type: decimal">
+<li><code>verbosity</code> (logging)</li>
+</ol>
+<p>Verbosity to display warning messages. The default value is 1 (warning), 0 for silent, 2 for info, and 3 for debug.</p>
+</div>
+<div id="boosting-parameter" class="section level4">
+<h4>Boosting Parameter</h4>
+<p>Controls the performance of the selected booster</p>
+<ol style="list-style-type: decimal">
+<li><code>eta</code> (alias learning_rate)</li>
+</ol>
+<p>The range of eta is 0 to 1 and default value is 0.3. It controls the maximum number of iterations, the lower eta will generate the slower computation.</p>
+<ol start="2" style="list-style-type: decimal">
+<li><code>gamma</code> (alias min_split_loss)</li>
+</ol>
+<p>The range of gamma is 0 to infinite and default value is 0 (no regularization). The higher gamma is the higher regularization, regularization means penalizing large coefficients that don’t improve the model’s performance.</p>
+<ol start="3" style="list-style-type: decimal">
+<li><code>max_depth</code></li>
+</ol>
+<p>Maximum depth of a tree. The range of max_depth is 0 to infinite and default value is 6, increasing this value will make the model more complex and more likely to overfit.</p>
+<ol start="4" style="list-style-type: decimal">
+<li><code>min_child_weight</code></li>
+</ol>
+<p>The range of min_child_weight is 0 to infinite and default value is 1. If the leaf node has a minimum sum of instance weight lower than min_child_weight in the tree partition step than the process of splitting the tree will stop growing.</p>
+<ol start="5" style="list-style-type: decimal">
+<li><code>subsample</code></li>
+</ol>
+<p>The range of subsample is 0 to 1 and default value is 1. It controls the number of ratio observations to a tree. If the value is set to 0.5 means that XGboost would randomly sample half of the training data prior to growing trees and this will prevent overfitting. subsample will occur once in every boosting iteration.</p>
+<ol start="6" style="list-style-type: decimal">
+<li><code>colsample_bytree</code></li>
+</ol>
+<p>The range of colsample_bytree is 0 to 1 and default value is 1. It controls the subsample ratio of columns when constructing each tree.</p>
+</div>
+</div>
+<div id="learning-task-parameter" class="section level3">
+<h3>Learning Task Parameter</h3>
+<p>Sets and evaluates the learning process of booster from the given data.</p>
+<ol style="list-style-type: decimal">
+<li>objective</li>
+</ol>
+<ul>
+<li><code>reg:squarederror</code> for regression with squared loss</li>
+<li><code>binary:logistic</code> for binary classification, output probability</li>
+</ul>
+<ol start="2" style="list-style-type: decimal">
+<li>eval_metric</li>
+</ol>
+<p>Evaluation metrics for validation data, a default metric will be assigned according to objective:</p>
+<ul>
+<li>rmse for regression</li>
+<li>logloss for classification</li>
+</ul>
+</div>
+<div id="modelling" class="section level3">
+<h3>Modelling</h3>
+<pre class="r"><code>data_train_xgb &lt;- xgb.DMatrix(data = data_train_sparse, label = data_train$price)</code></pre>
+<p>Let’s build a model and implement a few parameters that can affect our model’s performance and training speed.</p>
+<pre class="r"><code>tic()
+model &lt;- xgboost(data = data_train_xgb, nround = 500, objective = &quot;reg:squarederror&quot;, verbose = FALSE)
+toc()</code></pre>
+<pre><code>#&gt; elapsed time is 11.889000 seconds</code></pre>
+<pre class="r"><code>model$evaluation_log %&gt;% 
+  ggplot(aes(x = iter, y = train_rmse)) +
+  geom_line() +
+  labs(title = &quot;Model evaluation log&quot;,
+       y = &quot;RMSE data train&quot;,
+       x = &quot;Iteration&quot;) </code></pre>
+<p><img src="http://ahmadhusain.in/post/2021-06-22-mercari-price-suggestion/index_files/figure-html/unnamed-chunk-29-1.png" width="672" style="display: block; margin: auto;" />
+From the graph above, can we say that the curve is not yet fully convergent? if yes, then that’s a good sign our model can still be improved by increasing the number of iterations. for those of you who are curious, you can do it by yourself, because it is quite time consuming.</p>
+</div>
+<div id="model-evaluation" class="section level3">
+<h3>Model Evaluation</h3>
+<pre class="r"><code>pred_train &lt;- predict(model, data_train_sparse)</code></pre>
+<pre class="r"><code>result_train &lt;- data_train %&gt;% 
+  select(actual = price) %&gt;% 
+  mutate(prediction = pred_train)
+
+result_train %&gt;% 
+  sample_n(10)</code></pre>
+<pre><code>#&gt; # A tibble: 10 x 2
+#&gt;    actual prediction
+#&gt;     &lt;dbl&gt;      &lt;dbl&gt;
+#&gt;  1     15       12.8
+#&gt;  2     20       18.8
+#&gt;  3     24       22.7
+#&gt;  4     24       21.0
+#&gt;  5     34       30.9
+#&gt;  6     45       37.9
+#&gt;  7     14       20.4
+#&gt;  8     40       31.5
+#&gt;  9     10       17.5
+#&gt; 10     26       21.3</code></pre>
+<ul>
+<li><strong>Mean Absolute Error</strong></li>
+</ul>
+<p>There are many ways of measuring a model’s accuracy. However, the Mean Absolute Error, also known as MAE, is one of the many metrics for summarizing and assessing the quality of a machine learning model, especially for regression task. In MAE the error is calculated as an average of absolute differences between the target values and the predictions.</p>
+<p><span class="math display">\[MAE = \frac{1}{n}\sum_{t=1}^{n}|e_t|\]</span></p>
+<ul>
+<li><strong>Root Mean Squared Error</strong></li>
+</ul>
+<p>RMSE is a quadratic scoring rule that also measures the average magnitude of the error. It’s the square root of the average of squared differences between prediction and actual observation.</p>
+<p><span class="math display">\[RMSE = \sqrt{\frac{1}{n}\sum_{t=1}^{n}e_t^2}\]</span></p>
+<ul>
+<li><strong>Mean Absolute Percentage Error</strong></li>
+</ul>
+<p>MAPE measures the accuracy as a percentage, and can be calculated as the average absolute percent error for each time period minus actual values divided by actual values.</p>
+<p><span class="math display">\[MAPE = \frac{100\%}{n}\sum_{t=1}^{n}\left |\frac{e_t}{y_t}\right|\]</span></p>
+<pre class="r"><code>rmse_train &lt;- RMSE(y_pred = result_train$prediction, y_true = result_train$actual)
+rmse_train</code></pre>
+<pre><code>#&gt; [1] 7.225152</code></pre>
+<pre class="r"><code>result_train %&gt;%
+  sample_n(150) %&gt;%
+  mutate(no = 1:150) %&gt;%
+  pivot_longer(cols = c(actual, prediction),
+               names_to = &quot;label&quot;) %&gt;%
+  ggplot(aes(y = value)) +
+  geom_line(aes(x = no,
+                col = label)) +
+  scale_color_manual(values = c(&quot;firebrick&quot;, &quot;dodgerblue&quot;)) +
+  labs(x = &quot;Row indices&quot;,
+       y = &quot;Product price&quot;,
+       title = &quot;Comparasion actual vs prediction price&quot;,
+       subtitle = &quot;Sample of data train&quot;,
+       caption = paste(&quot;RMSE:&quot;, round(rmse_train, 2))) +
+  theme(legend.position = &quot;bottom&quot;)</code></pre>
+<p><img src="http://ahmadhusain.in/post/2021-06-22-mercari-price-suggestion/index_files/figure-html/unnamed-chunk-33-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="predict-on-test-data" class="section level3">
+<h3>Predict on Test Data</h3>
+<p>After develop model machine learning on train data set, what is the next step?</p>
+<ul>
+<li>Pick a final model based on an evaluation criteria (the best accurate model)<br />
+</li>
+<li>Obtain an unbiased measurement of the model’s accuracy by predicting on test set data</li>
+</ul>
+<p>The idea of obtaining an unbiased estimate of our model’s out-of-sample performance is an important one as it is often the case that the in-sample error (the error you obtain from running your algorithm on the dataset it was trained on) is optimistic and tuned / adapted in a particular way to minimize the error in the training sample.</p>
+<p>Therefore - the in-sample error is not a good representation or indication of how our model will perform when it is applied on unseen data.</p>
+<p>Another way to think about is that our training data has two components to it: signal and noise. The goal of machine learning is to identify the signal but be robust enough to avoid modeling the <strong>noise</strong> component of the data.</p>
+<p>When we build a model, we want to know that our model is not overly adapted to the data set to the point that it captures both the signal and noise, a phenomenon known as <strong>“overfitting”</strong>. When our model is guilty of overfitting, the in-sample accuracy will be very high (in some cases ~100%) but fail to perform on unseen data. <strong>The idea is to strike the right balance between accuracy (don’t underfit) and robustness to noise (don’t overfit).</strong></p>
+<div id="data-preparation-1" class="section level4">
+<h4>Data Preparation</h4>
+<p>Let’s us import and do some data pre-processing like we did before in training dataset.</p>
+<pre class="r"><code>data_test &lt;- read_csv(&quot;data/mercari/data-test.csv&quot;) 
+
+glimpse(data_test)</code></pre>
+<pre><code>#&gt; Rows: 1,595
+#&gt; Columns: 8
+#&gt; $ train_id          &lt;dbl&gt; 3429, 8191, 9731, 822, 2346, 1330, 8172, 5997, 6514,…
+#&gt; $ name              &lt;chr&gt; &quot;Marc Jacobs lipgloss Sugar Sugar&quot;, &quot;Southern Shirt …
+#&gt; $ item_condition_id &lt;dbl&gt; 1, 3, 1, 1, 1, 3, 2, 3, 3, 2, 1, 1, 1, 2, 2, 1, 3, 3…
+#&gt; $ category_name     &lt;chr&gt; &quot;Beauty/Makeup/Lips&quot;, &quot;Women/Coats &amp; Jackets/Fleece …
+#&gt; $ brand_name        &lt;chr&gt; &quot;MARC JACOBS&quot;, NA, NA, &quot;Louis Vuitton&quot;, &quot;Mega Bloks&quot;…
+#&gt; $ price             &lt;dbl&gt; 11, 66, 18, 39, 24, 305, 12, 5, 14, 350, 10, 8, 39, …
+#&gt; $ shipping          &lt;dbl&gt; 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 1, 1, 0, 1…
+#&gt; $ item_description  &lt;chr&gt; &quot;Free shipping Brand new / travel size (no box) Shad…</code></pre>
+<p>Recall, previously we made a custom function to prepare our unseen data. So, its time we use it on test data set. its look very straightforward, we just simply call the function and set the desired data.</p>
+<pre class="r"><code>data_test &lt;- data_prep(data = data_test)
+
+head(data_test)</code></pre>
+<pre><code>#&gt; # A tibble: 6 x 12
+#&gt;   train_id name  item_condition_… cat_1 cat_2 cat_3 cat_4 cat_5 brand_name price
+#&gt;      &lt;dbl&gt; &lt;chr&gt; &lt;fct&gt;            &lt;fct&gt; &lt;fct&gt; &lt;fct&gt; &lt;fct&gt; &lt;fct&gt; &lt;fct&gt;      &lt;dbl&gt;
+#&gt; 1     3429 marc… 1                beau… make… lips  unkn… unkn… marc jaco…    11
+#&gt; 2     8191 sout… 3                women coat… flee… unkn… unkn… unknown       66
+#&gt; 3     9731 clip… 1                women wome… hair… unkn… unkn… unknown       18
+#&gt; 4      822 loui… 1                women wome… wall… unkn… unkn… louis vui…    39
+#&gt; 5     2346 turt… 1                kids  toys  buil… unkn… unkn… mega bloks    24
+#&gt; 6     1330 ipho… 3                elec… cell… cell… unkn… unkn… apple        305
+#&gt; # … with 2 more variables: shipping &lt;fct&gt;, item_description &lt;chr&gt;</code></pre>
+</div>
+<div id="document-feature-matrix-1" class="section level4">
+<h4>Document Feature Matrix</h4>
+<p>Here are the same things like we did on training set data. Build a document feature matrix on unseen data. However, there are some adjustments later regarding to the dictionary/corpus. Right now, take your time to remembering the meaning of each command we used.</p>
+<pre class="r"><code>tic()
+dfm_item_description_test &lt;- build_dfm(x = data_test$item_description)
+dfm_item_description_test@Dimnames[[2]] &lt;- paste0(&quot;desc_&quot;, dfm_item_description_test@Dimnames[[2]])
+toc()</code></pre>
+<pre><code>#&gt; elapsed time is 0.313000 seconds</code></pre>
+<pre class="r"><code>tic()
+dfm_name_test &lt;- build_dfm(x = data_test$name)
+dfm_name_test@Dimnames[[2]] &lt;- paste0(&quot;name_&quot;, dfm_name_test@Dimnames[[2]])
+toc()</code></pre>
+<pre><code>#&gt; elapsed time is 0.153000 seconds</code></pre>
+<pre class="r"><code>tic()
+data_test_sparse &lt;- sparse.model.matrix(
+    ~ item_condition_id + shipping +
+    cat_1 + cat_2 + cat_3 + cat_4 + cat_5,
+    data = data_test[c(&quot;item_condition_id&quot;, &quot;brand_name&quot;, &quot;shipping&quot;, subcat)]
+)
+toc()</code></pre>
+<pre><code>#&gt; elapsed time is 0.048000 seconds</code></pre>
+<pre class="r"><code>class(dfm_item_description_test) &lt;- class(data_test_sparse)
+class(dfm_name_test) &lt;- class(data_test_sparse)</code></pre>
+<p>Combine data one-hot encoding, sparse matrix item description, and sparse matrix name product of our test data set.</p>
+<pre class="r"><code>tic()
+data_test_sparse &lt;- cbind(
+        data_test_sparse, 
+        dfm_item_description_test,
+        dfm_name_test)
+toc()</code></pre>
+<pre><code>#&gt; elapsed time is 0.020000 seconds</code></pre>
+</div>
+<div id="features-matching" class="section level4">
+<h4>Features Matching</h4>
+<p>Classic problem when dealing with text data predictors is, thare are words that do not appear in new data (test data set). So the dimension between training set and testing set data is different. if we force the model to predict the data, obviously it will error.</p>
+<pre class="r"><code>data_train_sparse@Dim</code></pre>
+<pre><code>#&gt; [1]  7995 22754</code></pre>
+<pre class="r"><code>data_test_sparse@Dim</code></pre>
+<pre><code>#&gt; [1] 1593 9034</code></pre>
+<p>Look, total training data columns is 22756 while the test data only 9035. Of course, we need to equate the features of training set and testing set data. First we need to check, which training data columns is not in the test data? following are the commands we used.</p>
+<pre class="r"><code>select_empty &lt;- data_train_sparse@Dimnames[[2]][!(data_train_sparse@Dimnames[[2]] %in% data_test_sparse@Dimnames[[2]])]</code></pre>
+<p>Then, we generate a new sparse matrix from the result above. Replace all missing value with 0, because in fact the test data does not contain some of these features.</p>
+<pre class="r"><code>tic()
+data_test_empty &lt;- setNames(data.frame(matrix(ncol = length(select_empty), nrow = nrow(data_test))), select_empty) %&gt;% 
+  replace(is.na(.), 0) %&gt;% 
+  as.matrix() %&gt;% 
+  as(&quot;sparseMatrix&quot;)
+toc()</code></pre>
+<pre><code>#&gt; elapsed time is 13.025000 seconds</code></pre>
+<p>Lets combine the data and check the dimension again.</p>
+<pre class="r"><code>data_test_sparse &lt;- cbind(
+  data_test_sparse,
+  data_test_empty
+)
+
+data_test_sparse@Dim</code></pre>
+<pre><code>#&gt; [1]  1593 22754</code></pre>
+<p>We can see that the column size is same with training data. Not finished yet, we need to match the order of test data columns as in the training set data. Why? this due to the functional requirements of the XGBoost model object it need the same order of columns as learned. Of course this will take quite a while to process.</p>
+<pre class="r"><code>df_test_complete &lt;- data_test_sparse %&gt;% 
+  as.matrix() %&gt;% 
+  as.data.frame()
+
+data_test_sparse &lt;- df_test_complete[,data_train_sparse@Dimnames[[2]]] %&gt;% 
+    as.matrix() %&gt;% 
+    as(&quot;sparseMatrix&quot;)
+
+rownames(data_test_sparse) &lt;- NULL</code></pre>
+<p>Do not forget to convert as <code>xgb DMatrix</code>.</p>
+<pre class="r"><code>data_test_xgb &lt;- xgb.DMatrix(data_test_sparse)</code></pre>
+</div>
+<div id="model-evaluation-data-test" class="section level4">
+<h4>Model Evaluation Data Test</h4>
+<p>We have finished preparing new data. Now, we can move to prediction step and evaluation model. Let’s use the generic <code>predict()</code> function to predict with the model we’ve constructed, on the test set data to get a sense of it’s performance on unseen data:</p>
+<pre class="r"><code>pred_test &lt;- predict(model, data_test_xgb)</code></pre>
+<pre class="r"><code>result_test &lt;- data_test %&gt;% 
+  select(actual = price) %&gt;% 
+  mutate(prediction = pred_test)
+
+result_test</code></pre>
+<pre><code>#&gt; # A tibble: 1,593 x 2
+#&gt;    actual prediction
+#&gt;     &lt;dbl&gt;      &lt;dbl&gt;
+#&gt;  1     11       14.2
+#&gt;  2     66       60.1
+#&gt;  3     18       24.3
+#&gt;  4     39       48.1
+#&gt;  5     24       25.5
+#&gt;  6    305      318. 
+#&gt;  7     12       18.6
+#&gt;  8      5       13.4
+#&gt;  9     14       18.0
+#&gt; 10    350      254. 
+#&gt; # … with 1,583 more rows</code></pre>
+<pre class="r"><code>rmse_test &lt;- RMSE(y_pred = result_test$prediction, y_true = result_test$actual)
+rmse_test</code></pre>
+<pre><code>#&gt; [1] 13.79102</code></pre>
+<pre class="r"><code>result_test %&gt;%
+  sample_n(150) %&gt;%
+  mutate(no = 1:150) %&gt;%
+  pivot_longer(cols = c(actual, prediction), names_to = &quot;label&quot;) %&gt;%
+  ggplot(aes(y = value)) +
+  geom_line(aes(x = no,
+                col = label)) +
+  scale_color_manual(values = c(&quot;firebrick&quot;, &quot;dodgerblue&quot;)) +
+  labs(
+    x = &quot;Row indices&quot;,
+    y = &quot;Product price&quot;,
+    title = &quot;Comparasion actual vs prediction price&quot;,
+    subtitle = &quot;Sample of data test&quot;,
+    caption = paste(&quot;RMSE:&quot;, round(rmse_test, 2))
+  ) +
+  theme(legend.position = &quot;bottom&quot;)</code></pre>
+<p><img src="http://ahmadhusain.in/post/2021-06-22-mercari-price-suggestion/index_files/figure-html/unnamed-chunk-48-1.png" width="672" style="display: block; margin: auto;" />
+A 13.79 RMSE on unseen data! it seems the model is good enough to predict prices on the new data.</p>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="http://ahmadhusain.in/tags/machine-learning/">Machine Learning</a></li>
+      <li><a href="http://ahmadhusain.in/tags/text-mining/">Text Mining</a></li>
+      <li><a href="http://ahmadhusain.in/tags/price-optimization/">Price Optimization</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="next" href="http://ahmadhusain.in/post/causal-impact/">
+    <span class="title">Next Page »</span>
+    <br>
+    <span>Causal Impact on Leads Generation</span>
+  </a>
+</nav>
+
+<div class="share-buttons">
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Mercari Price Suggestion on twitter"
+        href="https://twitter.com/intent/tweet/?text=Mercari%20Price%20Suggestion&amp;url=http%3a%2f%2fahmadhusain.in%2fpost%2f2021-06-22-mercari-price-suggestion%2f&amp;hashtags=MachineLearning%2cTextMining%2cPriceOptimization">
+        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve">
+            <path
+                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-253.927,424.544c135.939,0 210.268,-112.643 210.268,-210.268c0,-3.218 0,-6.437 -0.153,-9.502c14.406,-10.421 26.973,-23.448 36.935,-38.314c-13.18,5.824 -27.433,9.809 -42.452,11.648c15.326,-9.196 26.973,-23.602 32.49,-40.92c-14.252,8.429 -30.038,14.56 -46.896,17.931c-13.487,-14.406 -32.644,-23.295 -53.946,-23.295c-40.767,0 -73.87,33.104 -73.87,73.87c0,5.824 0.613,11.494 1.992,16.858c-61.456,-3.065 -115.862,-32.49 -152.337,-77.241c-6.284,10.881 -9.962,23.601 -9.962,37.088c0,25.594 13.027,48.276 32.95,61.456c-12.107,-0.307 -23.448,-3.678 -33.41,-9.196l0,0.92c0,35.862 25.441,65.594 59.311,72.49c-6.13,1.686 -12.72,2.606 -19.464,2.606c-4.751,0 -9.348,-0.46 -13.946,-1.38c9.349,29.426 36.628,50.728 68.965,51.341c-25.287,19.771 -57.164,31.571 -91.8,31.571c-5.977,0 -11.801,-0.306 -17.625,-1.073c32.337,21.15 71.264,33.41 112.95,33.41Z" />
+        </svg>
+    </a>
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Mercari Price Suggestion on linkedin"
+        href="https://www.linkedin.com/shareArticle?mini=true&amp;url=http%3a%2f%2fahmadhusain.in%2fpost%2f2021-06-22-mercari-price-suggestion%2f&amp;title=Mercari%20Price%20Suggestion&amp;summary=Mercari%20Price%20Suggestion&amp;source=http%3a%2f%2fahmadhusain.in%2fpost%2f2021-06-22-mercari-price-suggestion%2f">
+        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve">
+            <path
+                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-288.985,423.278l0,-225.717l-75.04,0l0,225.717l75.04,0Zm270.539,0l0,-129.439c0,-69.333 -37.018,-101.586 -86.381,-101.586c-39.804,0 -57.634,21.891 -67.617,37.266l0,-31.958l-75.021,0c0.995,21.181 0,225.717 0,225.717l75.02,0l0,-126.056c0,-6.748 0.486,-13.492 2.474,-18.315c5.414,-13.475 17.767,-27.434 38.494,-27.434c27.135,0 38.007,20.707 38.007,51.037l0,120.768l75.024,0Zm-307.552,-334.556c-25.674,0 -42.448,16.879 -42.448,39.002c0,21.658 16.264,39.002 41.455,39.002l0.484,0c26.165,0 42.452,-17.344 42.452,-39.002c-0.485,-22.092 -16.241,-38.954 -41.943,-39.002Z" />
+        </svg>
+    </a>
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Mercari Price Suggestion on reddit"
+        href="https://reddit.com/submit?url=http%3a%2f%2fahmadhusain.in%2fpost%2f2021-06-22-mercari-price-suggestion%2f&title=Mercari%20Price%20Suggestion">
+        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve">
+            <path
+                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-3.446,265.638c0,-22.964 -18.616,-41.58 -41.58,-41.58c-11.211,0 -21.361,4.457 -28.841,11.666c-28.424,-20.508 -67.586,-33.757 -111.204,-35.278l18.941,-89.121l61.884,13.157c0.756,15.734 13.642,28.29 29.56,28.29c16.407,0 29.706,-13.299 29.706,-29.701c0,-16.403 -13.299,-29.702 -29.706,-29.702c-11.666,0 -21.657,6.792 -26.515,16.578l-69.105,-14.69c-1.922,-0.418 -3.939,-0.042 -5.585,1.036c-1.658,1.073 -2.811,2.761 -3.224,4.686l-21.152,99.438c-44.258,1.228 -84.046,14.494 -112.837,35.232c-7.468,-7.164 -17.589,-11.591 -28.757,-11.591c-22.965,0 -41.585,18.616 -41.585,41.58c0,16.896 10.095,31.41 24.568,37.918c-0.639,4.135 -0.99,8.328 -0.99,12.576c0,63.977 74.469,115.836 166.33,115.836c91.861,0 166.334,-51.859 166.334,-115.836c0,-4.218 -0.347,-8.387 -0.977,-12.493c14.564,-6.47 24.735,-21.034 24.735,-38.001Zm-119.474,108.193c-20.27,20.241 -59.115,21.816 -70.534,21.816c-11.428,0 -50.277,-1.575 -70.522,-21.82c-3.007,-3.008 -3.007,-7.882 0,-10.889c3.003,-2.999 7.882,-3.003 10.885,0c12.777,12.781 40.11,17.317 59.637,17.317c19.522,0 46.86,-4.536 59.657,-17.321c3.016,-2.999 7.886,-2.995 10.885,0.008c3.008,3.011 3.003,7.882 -0.008,10.889Zm-5.23,-48.781c-16.373,0 -29.701,-13.324 -29.701,-29.698c0,-16.381 13.328,-29.714 29.701,-29.714c16.378,0 29.706,13.333 29.706,29.714c0,16.374 -13.328,29.698 -29.706,29.698Zm-160.386,-29.702c0,-16.381 13.328,-29.71 29.714,-29.71c16.369,0 29.689,13.329 29.689,29.71c0,16.373 -13.32,29.693 -29.689,29.693c-16.386,0 -29.714,-13.32 -29.714,-29.693Z" />
+        </svg>
+    </a>
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Mercari Price Suggestion on facebook"
+        href="https://facebook.com/sharer/sharer.php?u=http%3a%2f%2fahmadhusain.in%2fpost%2f2021-06-22-mercari-price-suggestion%2f">
+        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve">
+            <path
+                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-106.468,0l0,-192.915l66.6,0l12.672,-82.621l-79.272,0l0,-53.617c0,-22.603 11.073,-44.636 46.58,-44.636l36.042,0l0,-70.34c0,0 -32.71,-5.582 -63.982,-5.582c-65.288,0 -107.96,39.569 -107.96,111.204l0,62.971l-72.573,0l0,82.621l72.573,0l0,192.915l-191.104,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Z" />
+        </svg>
+    </a>
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Mercari Price Suggestion on whatsapp"
+        href="https://api.whatsapp.com/send?text=Mercari%20Price%20Suggestion%20-%20http%3a%2f%2fahmadhusain.in%2fpost%2f2021-06-22-mercari-price-suggestion%2f">
+        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve">
+            <path
+                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-58.673,127.703c-33.842,-33.881 -78.847,-52.548 -126.798,-52.568c-98.799,0 -179.21,80.405 -179.249,179.234c-0.013,31.593 8.241,62.428 23.927,89.612l-25.429,92.884l95.021,-24.925c26.181,14.28 55.659,21.807 85.658,21.816l0.074,0c98.789,0 179.206,-80.413 179.247,-179.243c0.018,-47.895 -18.61,-92.93 -52.451,-126.81Zm-126.797,275.782l-0.06,0c-26.734,-0.01 -52.954,-7.193 -75.828,-20.767l-5.441,-3.229l-56.386,14.792l15.05,-54.977l-3.542,-5.637c-14.913,-23.72 -22.791,-51.136 -22.779,-79.287c0.033,-82.142 66.867,-148.971 149.046,-148.971c39.793,0.014 77.199,15.531 105.329,43.692c28.128,28.16 43.609,65.592 43.594,105.4c-0.034,82.149 -66.866,148.983 -148.983,148.984Zm81.721,-111.581c-4.479,-2.242 -26.499,-13.075 -30.604,-14.571c-4.105,-1.495 -7.091,-2.241 -10.077,2.241c-2.986,4.483 -11.569,14.572 -14.182,17.562c-2.612,2.988 -5.225,3.364 -9.703,1.12c-4.479,-2.241 -18.91,-6.97 -36.017,-22.23c-13.314,-11.876 -22.304,-26.542 -24.916,-31.026c-2.612,-4.484 -0.279,-6.908 1.963,-9.14c2.016,-2.007 4.48,-5.232 6.719,-7.847c2.24,-2.615 2.986,-4.484 4.479,-7.472c1.493,-2.99 0.747,-5.604 -0.374,-7.846c-1.119,-2.241 -10.077,-24.288 -13.809,-33.256c-3.635,-8.733 -7.327,-7.55 -10.077,-7.688c-2.609,-0.13 -5.598,-0.158 -8.583,-0.158c-2.986,0 -7.839,1.121 -11.944,5.604c-4.105,4.484 -15.675,15.32 -15.675,37.364c0,22.046 16.048,43.342 18.287,46.332c2.24,2.99 31.582,48.227 76.511,67.627c10.685,4.615 19.028,7.371 25.533,9.434c10.728,3.41 20.492,2.929 28.209,1.775c8.605,-1.285 26.499,-10.833 30.231,-21.295c3.732,-10.464 3.732,-19.431 2.612,-21.298c-1.119,-1.869 -4.105,-2.99 -8.583,-5.232Z" />
+        </svg>
+    </a>
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Mercari Price Suggestion on telegram"
+        href="https://telegram.me/share/url?text=Mercari%20Price%20Suggestion&amp;url=http%3a%2f%2fahmadhusain.in%2fpost%2f2021-06-22-mercari-price-suggestion%2f">
+        <svg version="1.1" xml:space="preserve" viewBox="2 2 28 28">
+            <path
+                d="M26.49,29.86H5.5a3.37,3.37,0,0,1-2.47-1,3.35,3.35,0,0,1-1-2.47V5.48A3.36,3.36,0,0,1,3,3,3.37,3.37,0,0,1,5.5,2h21A3.38,3.38,0,0,1,29,3a3.36,3.36,0,0,1,1,2.46V26.37a3.35,3.35,0,0,1-1,2.47A3.38,3.38,0,0,1,26.49,29.86Zm-5.38-6.71a.79.79,0,0,0,.85-.66L24.73,9.24a.55.55,0,0,0-.18-.46.62.62,0,0,0-.41-.17q-.08,0-16.53,6.11a.59.59,0,0,0-.41.59.57.57,0,0,0,.43.52l4,1.24,1.61,4.83a.62.62,0,0,0,.63.43.56.56,0,0,0,.4-.17L16.54,20l4.09,3A.9.9,0,0,0,21.11,23.15ZM13.8,20.71l-1.21-4q8.72-5.55,8.78-5.55c.15,0,.23,0,.23.16a.18.18,0,0,1,0,.06s-2.51,2.3-7.52,6.8Z" />
+        </svg>
+    </a>
+</div>
+
+  </footer>
+</article>
+    </main>
+    <footer class="footer">
+    <span>&copy; 2021 <a href="http://ahmadhusain.in/">Husain&#39;s Blog</a></span>
+    <span>&middot;</span>
+    <span>Powered by <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a></span>
+    <span>&middot;</span>
+    <span>Theme <a href="https://git.io/hugopapermod" rel="noopener" target="_blank">PaperMod</a></span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)">
+    <button class="top-link" id="top-link" type="button" accesskey="g">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+            <path d="M12 6H0l6-6z" />
+        </svg>
+    </button>
+</a>
+
+<script>
+    window.onload = function () {
+        if (localStorage.getItem("menu-scroll-position")) {
+            document.getElementById('menu').scrollLeft = localStorage.getItem("menu-scroll-position");
+        }
+    }
+
+    function menu_on_scroll() {
+        localStorage.setItem("menu-scroll-position", document.getElementById('menu').scrollLeft);
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerText = 'copy';
+
+        function copyingDone() {
+            copybutton.innerText = 'copied!';
+            setTimeout(() => {
+                copybutton.innerText = 'copy';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        container.appendChild(copybutton);
+    });
+</script>
+</body>
+
+</html>
