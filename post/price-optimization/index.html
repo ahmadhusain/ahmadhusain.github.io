@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Price Optimization | Husain&#39;s Blog</title>
+<meta name="keywords" content="Linear Programming, Price Optimization" />
+<meta name="description" content="Price Optimization A demand model enables us to search for the optimal price by analyzing how the price changes increase or decrease the profits. In practice, however, we face numerous constraints and interdependencies that require much more elaborate and specialized optimization models to be developed. From [AI for Marketing Operation] Book, most of the constraints fall into one of the following three categories: supply constraints, demand constraints, and structural constraints.">
+<meta name="author" content="Ahmad Husain">
+<link rel="canonical" href="http://ahmadhusain.in/post/price-optimization/" />
+<link crossorigin="anonymous" href="/assets/css/stylesheet.min.31c8f47d03a5b4f5a525717dd7c8a66731e549f2986727b579ecc071e83faa67.css" integrity="sha256-Mcj0fQOltPWlJXF918imZzHlSfKYZye1eezAceg/qmc=" rel="preload stylesheet" as="style">
+<script defer crossorigin="anonymous" src="/assets/js/highlight.min.7680afc38aa6b15ddf158a4f3780b7b1f7dde7e91d26f073e6229bb7a0793c92.js" integrity="sha256-doCvw4qmsV3fFYpPN4C3sffd5&#43;kdJvBz5iKbt6B5PJI="
+    onload="hljs.initHighlightingOnLoad();"></script>
+<link rel="icon" href="https://ahmadhusain.in/img/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://ahmadhusain.in/img/favicon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://ahmadhusain.in/img/favicon.png">
+<link rel="apple-touch-icon" href="http://ahmadhusain.in/apple-touch-icon.png">
+<link rel="mask-icon" href="http://ahmadhusain.in/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<meta name="generator" content="Hugo 0.82.0" />
+<link rel="alternate" hreflang="en" href="http://ahmadhusain.in/post/price-optimization/" />
+<meta property="og:title" content="Price Optimization" />
+<meta property="og:description" content="Price Optimization A demand model enables us to search for the optimal price by analyzing how the price changes increase or decrease the profits. In practice, however, we face numerous constraints and interdependencies that require much more elaborate and specialized optimization models to be developed. From [AI for Marketing Operation] Book, most of the constraints fall into one of the following three categories: supply constraints, demand constraints, and structural constraints." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://ahmadhusain.in/post/price-optimization/" />
+<meta property="og:image" content="http://ahmadhusain.in/img/Dynamic-pricing.jpg" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2021-06-23T00:00:00&#43;00:00" />
+<meta property="article:modified_time" content="2021-06-23T00:00:00&#43;00:00" />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="http://ahmadhusain.in/img/Dynamic-pricing.jpg" />
+<meta name="twitter:title" content="Price Optimization"/>
+<meta name="twitter:description" content="Price Optimization A demand model enables us to search for the optimal price by analyzing how the price changes increase or decrease the profits. In practice, however, we face numerous constraints and interdependencies that require much more elaborate and specialized optimization models to be developed. From [AI for Marketing Operation] Book, most of the constraints fall into one of the following three categories: supply constraints, demand constraints, and structural constraints."/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "http://ahmadhusain.in/post/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Price Optimization",
+      "item": "http://ahmadhusain.in/post/price-optimization/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Price Optimization",
+  "name": "Price Optimization",
+  "description": "Price Optimization A demand model enables us to search for the optimal price by analyzing how the price changes increase or decrease the profits. In practice, however, we face numerous constraints and interdependencies that require much more elaborate and specialized optimization models to be developed. From [AI for Marketing Operation] Book, most of the constraints fall into one of the following three categories: supply constraints, demand constraints, and structural constraints.",
+  "keywords": [
+    "Linear Programming", "Price Optimization"
+  ],
+  "articleBody": "  Price Optimization A demand model enables us to search for the optimal price by analyzing how the price changes increase or decrease the profits. In practice, however, we face numerous constraints and interdependencies that require much more elaborate and specialized optimization models to be developed. From [AI for Marketing Operation] Book, most of the constraints fall into one of the following three categories: supply constraints, demand constraints, and structural constraints.\n Supply constraints can be imposed by limited resource capacity, such as the fixed number of seats in an Airlines or Cinema. Demand constraints are often related to imperfect consumer segmentation, interdependency of the demands on substitutable products, demand changes over time, and demand uncertainty, in the sense that the demand cannot be predicted accurately. Structural constraints are related to operational and legal conditions that might require suboptimal but practicable solutions to be selected.  We will discuss those constraints later, but for now let’s begin for the simple one example.\nConstant Price optimization In this case, we are going to use demand models to find the optimal prices recommendation. Here is the synthetic data we generate for academic purpose. The data is regarding the sales of shoes from a factory located in Bandung. Each row represents the price and total shoes sold at time-t, where aggregated from weekly transactions. Let’s read and glimpse the data.\n# load libraries library(tidyverse) library(pracma) library(lubridate) shoes  # Rows: 1,014 # Columns: 4 # $ region  \"Jakarta\", \"Jakarta\", \"Jakarta\", \"Jakarta\", \"Jakarta\", \"Jakar… # $ date  2015-01-04, 2015-01-11, 2015-01-18, 2015-01-25, 2015-02-01, … # $ price  62.0, 55.0, 62.0, 65.0, 55.5, 67.5, 76.0, 70.5, 57.5, 74.0, 7… # $ quantity  28469.95, 31622.14, 39041.52, 24339.60, 39206.38, 26558.08, 2… Demand Function Since we are going to use demand function to find the optimum price, we need to know common type of demand model called linear model. The demand is given by:\n\\[d(p) = \\beta + \\alpha * price\\] \\[d'(p) = \\alpha\\]\nwhere \\(\\alph\\) is a slope of the curve and \\(\\beta\\) is the intercept. In general setting, the total profit function can defined as:\n\\[L(p) = d(p)(p-c)\\] \\[u'p*vp + up*v'p\\]\nwhere, \\(L\\) gives the profit, \\(d\\) is demand function that depends of the price and \\(c\\) is the marginal cost. From mathematical-wise, if we want to optimize the function, find the local/global minimum or local/global maximum, we can use the partial derivative technique. For you who want to deep dive this concept, please lookup to this articel. So, taaking the derivative with respect to price we have:\n\\[L'(p) = d'(p)(p-c) + d(p)\\] making \\(L'(p) = 0\\) to calculate the optimum price (first order condition), we have:\n\\[d'(p^*)(p^*-c)+d(p^*) = 0 \\\\ d'(p^*)p^*+d(P^*) - d'(p^*)c\\]\nSince \\(d'(p) = \\alpha\\) the formula be like:\n\\[d'(p^*)p+d(p^*) = d'(p^*)c, \\\\ \\alpha p^* + \\alpha p^* + \\beta = \\alpha c, \\\\ p^* = \\frac{\\alpha c - \\beta}{2 \\alpha}.\\]\n Fit a demand model let’s see how to calculate the optimum prices for this demand functions. Assumed that the marginal cost is $50. So we create an object called mc with value 50. For the demo purpose, we will only use Semarang region. So lets first subset the data.\nmc % filter(region == \"Semarang\") shoes_filter %% head() # # A tibble: 6 x 4 # region date price quantity #     # 1 Semarang 2015-01-04 64 6586. # 2 Semarang 2015-01-11 61 8623. # 3 Semarang 2015-01-18 62 10381. # 4 Semarang 2015-01-25 67.5 6173. # 5 Semarang 2015-02-01 60 7935. # 6 Semarang 2015-02-08 61.5 11534. Next, we create a new column profit which is the calculation of profit with the formula we discussed earlier.\nshoes_agg % mutate(profit = quantity*(price-mc)) head(shoes_agg) # # A tibble: 6 x 5 # region date price quantity profit #      # 1 Semarang 2015-01-04 64 6586. 92198. # 2 Semarang 2015-01-11 61 8623. 94856. # 3 Semarang 2015-01-18 62 10381. 124571. # 4 Semarang 2015-01-25 67.5 6173. 108020. # 5 Semarang 2015-02-01 60 7935. 79346. # 6 Semarang 2015-02-08 61.5 11534. 132640. Create a linear model in R is as convenient as you’d wish it to be. We will call the lm() function and specify two parameters: the formula for our linear model and the data from which our model is built from. Notice that we will saved model_lm as a linear model and we can now use the attributes of model_lm, such as its $coefficients to create our price optimization later.\nshoes_agg %% ggplot(mapping = aes(x = price, y = quantity)) + geom_point() # Fit of the demand model model_lm  # # Call: # lm(formula = quantity ~ price, data = shoes_agg) # # Residuals: # Min 1Q Median 3Q Max # -3770.6 -1539.0 -276.3 1420.5 9452.7 # # Coefficients: # Estimate Std. Error t value Pr(|t|) # (Intercept) 13726.073 591.550 23.20 price -90.679 7.136 -12.71 --- # Signif. codes: 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 # # Residual standard error: 2195 on 167 degrees of freedom # Multiple R-squared: 0.4916, Adjusted R-squared: 0.4885 # F-statistic: 161.5 on 1 and 167 DF, p-value:  slope - slope nya bernilai negatif, karena korelasi antara price dan quantity juga negatif. artinya ketika price nya semakin tinggi maka berdampak pada quantity produk terjual semakin sedikit.\nvariabel price signifikan mempengaruhi variabel quantity karena pvalue lebih kecil dibandingkan 0.05.\nFrom the output of the summary() call, we see the two coefficients that represent our model line. The point at which our line crosses the y-intercept is 13726.073 (\\(\\alpha\\)) and the slope (\\(\\beta\\)) is -90.679.\n# extract slope and intercept from the model. alpha  # aplha: -90.67915 # beta: 13726.07  Find Optimal Price Next, we will create a new column called profit_fitted to estimate the profit from the model_lm. The idea is to compare the actual profit, and the estimated profit derived from the model.\nshoes_agg % mutate(profit_fitted = model_lm$fitted.values*(price - mc)) shoes_agg %% head() # # A tibble: 6 x 6 # region date price quantity profit profit_fitted #       # 1 Semarang 2015-01-04 64 6586. 92198. 110917. # 2 Semarang 2015-01-11 61 8623. 94856. 90141. # 3 Semarang 2015-01-18 62 10381. 124571. 97248. # 4 Semarang 2015-01-25 67.5 6173. 108020. 133092. # 5 Semarang 2015-02-01 60 7935. 79346. 82853. # 6 Semarang 2015-02-08 61.5 11534. 132640. 93717. Then, we are going to find the optimal price. So we need to substitute. the alpha and beta values that we obtained before, with the derivative formula of profit.\n\\[p^* = \\frac{\\alpha c - \\beta}{2 \\alpha}\\]\n# Optimal Price price_max_profit  price_max_profit # price # 100.6848 profit_max # price # 232950.4 To convince you, here is the graphic result.\n# Plots ggplot(shoes_agg) + aes(x = price, y = profit) + geom_point() + geom_vline(xintercept = price_max_profit, lty = 2) + geom_hline(yintercept = profit_max, lty = 2) + geom_line(aes(x = price, y = profit_fitted), color = 'red') + annotate(geom = \"label\", x = price_max_profit, y = profit_max+(profit_max*0.15), label = paste(\"Optimal Price at $\", round(price_max_profit,2))) From result above, the right price to optimize the profit is about $ 100.68. This look make sense, because from the historical data and graphic, if we shift the price value to the right (which mean increasing value), there will possibility that customer are reluctant to buy the produt so the profit decreases.\nDive Deeper: it’s your turn to try to find optimal prices for other regions. Please create a new chunk below and you can follow the previous step.\n# your solution here   Dynamic Price with time interval Price Differentiation:\n Differentiation with demand shifting  The shifting effect is especially important in cases of constrained supply because it can help to achieve a more even demand distribution and reduce stockout. For example, the supply of seats in a Cinema is fixed but the demand can vary significantly, typically reaching its maximum on the weekend and its minimum on weekdays. The Cinema can lose potential revenue if the peak demand on the weekends exceeds the capacity. We can expect that setting variable ticket prices for different days of the week can improve profits because the higher demand on the weekends enables the Cinema to charge higher prices and make better margins, please look at following graphic:\n Figure 1: Example of ticket price optimization for a Cinema. The vertical bars represent the number of seats sold, and the points are the ticket prices for the corresponding days.   Differentiation with constrained supply  The previous method for price optimization we have considered a demand function to setting prices that maybe the optimal possible profit. Those assumption is reasonably fair, for some industries, like supermarket, where stockouts are rare. However, it does not hold in many other industries that face different supply constraints. In this section, we will discuss a relatively simple case, in which each market segment has a fixed capacity of a product and we need to find the optimal global price or segment-level prices\nIntroduction Linear Programming We will use method called linear programming to optimize the objective function. Here is a brief explanation about linear programming. Linear Programming is basically a subset of optimization. Linear programming or linear optimization is an optimization technique wherein we try to find an optimal value for a linear objective function for a system of linear constraints using a varying set of decision variables. Its also known as sensitivity analysis. There are two important things:\n sensitivity of the optimal solution to changes in the available resources, i.e., the right hand side (RHS) of the constraint sensitivity of the optimal solution to the changes in unit profit or unit cost, i.e., coefficient of the objective function.  Case study:\nA retailer is going to divide their 50 factory between two groups. Production cost for group A is $10 per factory. Production cost for group B is $20 per factory. The retailer can spend at most $700 on production seed. If group B brings in a profit of $150 per factory and group A brings a profit of 140 per factory, how many factories should the retailer push to maximize their profit?\nLets create an objective function:\n\\[P = 140a + 150b\\] where a is the number of factories of group A, and b is vice versa.\nConstraints:\n\\[a + b \\leqslant 50 \\\\ 10a + 20b \\leqslant 700 \\\\ a \\geqslant 0 \\\\ b \\geqslant 0 \\] ### Convert objective function to R code\nlets convert to R code:\nlinprog:\n cc = fungsi tujuan / fungsi objective Aeq = constraint beq = RHS (batas maksimum/minimum dari fungsi constraint)  # setup objective function and constraints obj_func  # $x # [1] 30 20 # # $fval # [1] 7200 # # $errno # [1] 1 # # $message # [1] \"Solver LP converged successfully.\" The maximum z value (and thus, the optimum) that can be obtained while satisfying the given constraints is 7200, where x1 = 30 and x2 = 20. So the maximum profit is 7200 when the retailer push 30 factory of group A and 20 factory of group B.\n\\[P = 140*30 + 150*20\\]\n140*30 + 150*20 # [1] 7200 Dive deeper\nA company manufactures and sell 2 type of product “A” and “B”. The cost of production of each unit A and B is $2 and $1 respectively. Each unit of A yields a profit of $50 and each unit of B yields a profit of $18 on selling. Company estimates the monthly demand of A and B to be at maximum of 80 units in all. The production budget for the month is set at $ 100. How many units should the company manufacture in order to earn maximum profit from its monthly sales of A and B?\nobjective function:\n\\[P = 50A + 18B\\]\nconstraint:\n\\[a + b \\leqslant 80 \\\\ 2a + 1b \\leqslant 100 \\\\ a \\geqslant 0 \\\\ b \\geqslant 0 \\]\n# your code here # setup objective function and constraints obj_func2  # $x # [1] 20 60 # # $fval # [1] 2080 # # $errno # [1] 1 # # $message # [1] \"Solver LP converged successfully.\"  The maximum z value (and thus, the optimum) that can be obtained while satisfying the given constraints is 2080, where A = 20 and B = 60. So the maximum profit is $2080 when the company sell 20 product A and 60 product B.\n  Case study After you understand the basic concept is, lets go through the main topic, with shoes dataset. If the shoes retailer want to plans a four week sale campaign for a single product. We need to prepare the data first to get weekly demand vs pricing.\ndata_agg % mutate(week = ceiling(day(date) / 7)) %% filter(week != 5) %% select(week, price, quantity) data_agg %% ggplot(aes(x = price, y = quantity)) + geom_point() + geom_smooth() + facet_wrap(facets = vars(week)) to get the demand function, we need to create a linear model model for each week group. Lets do it and look the intercept and slope value.\nfitted_models % group_by(week) %% do(model = lm(quantity ~ price, data = .)) cat(\"model linear minggu pertama: \\n\") # model linear minggu pertama: fitted_models$model[[1]]  # # Call: # lm(formula = quantity ~ price, data = .) # # Coefficients: # (Intercept) price # 12497.97 -76.43 cat(\"--------- \\n \\n\") # --------- #  cat(\"model linear minggu kedua: \\n\") # model linear minggu kedua: fitted_models$model[[2]]  # # Call: # lm(formula = quantity ~ price, data = .) # # Coefficients: # (Intercept) price # 15365.4 -106.5 cat(\"--------- \\n \\n\") # --------- #  cat(\"model linear minggu ketiga: \\n\") # model linear minggu ketiga: fitted_models$model[[3]]  # # Call: # lm(formula = quantity ~ price, data = .) # # Coefficients: # (Intercept) price # 13213.18 -88.44 cat(\"--------- \\n \\n\") # --------- #  cat(\"model linear minggu keempat: \\n\") # model linear minggu keempat: fitted_models$model[[4]]  # # Call: # lm(formula = quantity ~ price, data = .) # # Coefficients: # (Intercept) price # 14363.2 -98.1 # allowed price levels price_list  demand_vec  # demand matrix: #  demand_mat # [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10] # [1,] 9517.2 7988.6 6460 4931.4 2638.5 1109.9 11211.9 9081.9 6951.9 4821.9 # [,11] [,12] [,13] [,14] [,15] [,16] [,17] [,18] [,19] [,20] # [1,] 1626.9 0 9764.02 7995.22 6226.42 4457.62 1804.42 35.62 10537.3 8575.3 # [,21] [,22] [,23] [,24] # [1,] 6613.3 4651.3 1708.3 0 # Evaluate revenue for each demand function and each price level # fungsi objektif revenue_vec  # revenue vector: #  revenue_vec # [1] 371170.80 471327.40 510340.00 488208.60 340366.50 165375.10 437264.10 # [8] 535832.10 549200.10 477368.10 209870.10 0.00 380796.78 471717.98 # [15] 491887.18 441304.38 232770.18 5307.38 410954.70 505942.70 522450.70 # [22] 460478.70 220370.70 0.00  Now we solve the following optimization problem: Introduction to Algorithmic Marketing: AI for Marketing Operation\n \\[\\displaystyle \\max_{z} \\ \\sum_{t=1}^{T}\\sum_{i=1}^{K} z_{it} \\ . \\ P_i \\ . \\ q(p_i,t) \\\\ subject \\ to \\sum_{t=1}^{T}\\sum_{i=1}^{K} z_{it} \\ . \\ q(P_i,t) \\le C \\\\ \\sum_{i=1}^{K} z_{it} = 1, \\ for \\ t = 1,...,T \\\\ z_{it} \\ge 0\\]\nwhere q is demand, P is price, T is the number of time periods, and K is the number of price levels. Next we create the constraints formulas:\n First we generate a binary mask to ensure all Z’s in one time interval sum up to 1. Second, we ensure that the sum of all demands is less than the available stock level, that is \\(z_{it} \\ . \\ q(P_i,t) \\le C\\).  # constraint -------------------------------------------------------- create_mat  Then, we do the linear program, and put all the value into the argument. Do not forget to determined the b argument, which is product capacity.\n# linear program set.seed(9999) result  # Total Revenue: $ 1189402.04 #  cat(\"Price schedule: \\n\") # Price schedule: matrix(result$x, nrow = length(price_list), ncol = t, byrow = F)  # [,1] [,2] [,3] [,4] # [1,] 0 0.0000000 0 0 # [2,] 0 0.0000000 0 0 # [3,] 0 0.0000000 0 0 # [4,] 0 0.6954241 0 0 # [5,] 1 0.3045759 1 1 # [6,] 0 0.0000000 0 0 Each column of the solution matrix corresponds to a time period (one week). Each row corresponds to z value that can be interpreted as the percentage of time z’t price level should be used in the corresponding time period. We can interpret, the optimal price is $129 for the first, third, and fourth weeks when the capacity product is 10,000 items. For the same capacity, the price is fractional for the second week, which means a mix with 69% at $99 and 31% at $129.\nwith 10000 product stock available, we can determine the schedule price as follows:\nThe first week sell 2838 stocks at a price of $129, the estimated revenue earned was around $340,366.50 The second week sell 3353 stocks at $99, and 495 at $129, the estimated revenue earned was around $331,973.28 + $63,921.37 or around $389,594 The third week sell 1804 stocks at a price of $129, estimated revenue $232,770.18 Fourth week sell 1708 stocks at price $129, estimated revenue $220,370.70  So the total revenue which company will earn if all product are sold is approx $1,189,402.04\nDive Deeper:\nLet us now consider an example of a retailer who plans a four-week sale campaign for a single product. The set of allowed prices includes five levels: $89, $79, $69, $59, and $49. Demand functions are estimated for each week of the sale as follows:\nweek 1: 1500 - 10p week 2: 1300 - 15p week 3: 1200 - 15p week 4: 1100 - 18p\nFind the optimal price for each week if the product capacity is 1300. What is the estimated revenue obtained if you use the price combination above?     ",
+  "wordCount" : "3209",
+  "inLanguage": "en",
+  "image":"http://ahmadhusain.in/img/Dynamic-pricing.jpg","datePublished": "2021-06-23T00:00:00Z",
+  "dateModified": "2021-06-23T00:00:00Z",
+  "author":{
+    "@type": "Person",
+    "name": "Ahmad Husain"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "http://ahmadhusain.in/post/price-optimization/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Husain's Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "http://ahmadhusain.in/img/r-icon.png"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+<noscript>
+    <style type="text/css">
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: #1d1e20;
+                --entry: #2e2e33;
+                --primary: rgba(255, 255, 255, 0.84);
+                --secondary: rgba(255, 255, 255, 0.56);
+                --tertiary: rgba(255, 255, 255, 0.16);
+                --content: rgba(255, 255, 255, 0.74);
+                --hljs-bg: #2e2e33;
+                --code-bg: #37383e;
+                --border: #333;
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="http://ahmadhusain.in/" accesskey="h" title="Husain&#39;s Blog (Alt + H)">Husain&#39;s Blog</a>
+            <span class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+                <ul class="lang-switch"><li>|</li>
+                    <li>
+                        <a href="http://ahmadhusain.in/id/" title="Indonesian"
+                            aria-label="Indonesian">Indonesian</a>
+                    </li>
+                </ul>
+            </span>
+        </div>
+        <ul id="menu" onscroll="menu_on_scroll()">
+            <li>
+                <a href="http://ahmadhusain.in/search/" title="Search (Alt &#43; /)" accesskey=/>
+                    <span>Search</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://ahmadhusain.in/tags/" title="Tags">
+                    <span>Tags</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      displayMath: [['$$','$$'], ['\\[', '\\]']],
+      processEscapes: true,
+      processEnvironments: true
+    },
+    options: {
+      skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+    }
+  };
+
+  window.addEventListener('load', (event) => {
+      document.querySelectorAll("mjx-container").forEach(function(x){
+        x.parentElement.classList += 'has-jax'})
+    });
+
+</script>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <div class="breadcrumbs"><a href="http://ahmadhusain.in/">Home</a>&nbsp;»&nbsp;<a href="http://ahmadhusain.in/post/">Posts</a></div>
+    <h1 class="post-title">
+      Price Optimization
+    </h1>
+    <div class="post-meta">June 23, 2021&nbsp;·&nbsp;16 min&nbsp;·&nbsp;Ahmad Husain
+</div>
+  </header> 
+<figure class="entry-cover"><img loading="lazy" src="http://ahmadhusain.in/img/Dynamic-pricing.jpg" alt="illustration from: https://www.zen-hs.com/resources/harga-dinamis/">
+        <p>illustration from: <a href="https://www.zen-hs.com/resources/harga-dinamis/">https://www.zen-hs.com/resources/harga-dinamis/</a></p>
+</figure><div class="toc">
+    <details >
+        <summary accesskey="c" title="(Alt + C)">
+            <div class="details">Table of Contents</div>
+        </summary>
+        <div class="inner"><ul>
+                <li>
+                    <a href="#" aria-label="Price Optimization">Price Optimization</a><ul>
+                        
+                <li>
+                    <a href="#" aria-label="Constant Price optimization">Constant Price optimization</a><ul>
+                        
+                <li>
+                    <a href="#" aria-label="Demand Function">Demand Function</a></li>
+                <li>
+                    <a href="#" aria-label="Fit a demand model">Fit a demand model</a></li>
+                <li>
+                    <a href="#" aria-label="Find Optimal Price">Find Optimal Price</a></li></ul>
+                </li>
+                <li>
+                    <a href="#" aria-label="Dynamic Price with time interval">Dynamic Price with time interval</a><ul>
+                        
+                <li>
+                    <a href="#" aria-label="Introduction Linear Programming">Introduction Linear Programming</a></li>
+                <li>
+                    <a href="#" aria-label="Case study">Case study</a>
+                </li>
+            </ul>
+            </li>
+            </ul>
+            </li>
+            </ul>
+        </div>
+    </details>
+</div>
+
+  <div class="post-content">
+<script src="http://ahmadhusain.in/post/price-optimization/index_files/header-attrs/header-attrs.js"></script>
+
+
+<div id="price-optimization" class="section level1">
+<h1>Price Optimization</h1>
+<p>A demand model enables us to search for the optimal price by analyzing how the price changes increase or decrease the profits. In practice, however, we face numerous constraints and interdependencies that require much more elaborate and specialized optimization models to be developed. From [AI for Marketing Operation] Book, most of the constraints fall into one of the following three categories: <strong>supply constraints, demand constraints, and structural constraints</strong>.</p>
+<ul>
+<li>Supply constraints can be imposed by limited resource capacity, such as the fixed number of seats in an Airlines or Cinema.</li>
+<li>Demand constraints are often related to imperfect consumer segmentation, interdependency of the demands on substitutable products, demand changes over time, and demand uncertainty, in the sense that the demand cannot be predicted accurately.</li>
+<li>Structural constraints are related to operational and legal conditions that might require suboptimal but practicable solutions to be selected.</li>
+</ul>
+<p>We will discuss those constraints later, but for now let’s begin for the simple one example.</p>
+<div id="constant-price-optimization" class="section level2">
+<h2>Constant Price optimization</h2>
+<p>In this case, we are going to use demand models to find the optimal prices recommendation. Here is the synthetic data we generate for academic purpose. The data is regarding the sales of shoes from a factory located in Bandung. Each row represents the price and total shoes sold at time-t, where aggregated from weekly transactions. Let’s read and glimpse the data.</p>
+<pre class="r"><code># load libraries
+
+library(tidyverse)
+library(pracma)
+library(lubridate)</code></pre>
+<pre class="r"><code>shoes &lt;- read_csv(file = &quot;data/shoes.csv&quot;)
+glimpse(shoes)</code></pre>
+<pre><code>#&gt; Rows: 1,014
+#&gt; Columns: 4
+#&gt; $ region   &lt;chr&gt; &quot;Jakarta&quot;, &quot;Jakarta&quot;, &quot;Jakarta&quot;, &quot;Jakarta&quot;, &quot;Jakarta&quot;, &quot;Jakar…
+#&gt; $ date     &lt;date&gt; 2015-01-04, 2015-01-11, 2015-01-18, 2015-01-25, 2015-02-01, …
+#&gt; $ price    &lt;dbl&gt; 62.0, 55.0, 62.0, 65.0, 55.5, 67.5, 76.0, 70.5, 57.5, 74.0, 7…
+#&gt; $ quantity &lt;dbl&gt; 28469.95, 31622.14, 39041.52, 24339.60, 39206.38, 26558.08, 2…</code></pre>
+<div id="demand-function" class="section level3">
+<h3>Demand Function</h3>
+<p>Since we are going to use demand function to find the optimum price, we need to know common type of demand model called linear model. The demand is given by:</p>
+<p><span class="math display">\[d(p) = \beta + \alpha * price\]</span>
+<span class="math display">\[d&#39;(p) = \alpha\]</span></p>
+<p>where <span class="math inline">\(\alph\)</span> is a slope of the curve and <span class="math inline">\(\beta\)</span> is the intercept. In general setting, the total profit function can defined as:</p>
+<p><span class="math display">\[L(p) = d(p)(p-c)\]</span>
+<span class="math display">\[u&#39;p*vp + up*v&#39;p\]</span></p>
+<p>where, <span class="math inline">\(L\)</span> gives the profit, <span class="math inline">\(d\)</span> is demand function that depends of the price and <span class="math inline">\(c\)</span> is the <em>marginal cost</em>. From mathematical-wise, if we want to optimize the function, find the local/global minimum or local/global maximum, we can use the partial derivative technique. For you who want to deep dive this concept, please lookup to <a href="https://www.whitman.edu/mathematics/calculus_online/section06.01.html">this articel</a>. So, taaking the derivative with respect to price we have:</p>
+<p><span class="math display">\[L&#39;(p) = d&#39;(p)(p-c) + d(p)\]</span>
+making <span class="math inline">\(L&#39;(p) = 0\)</span> to calculate the optimum price (first order condition), we have:</p>
+<p><span class="math display">\[d&#39;(p^*)(p^*-c)+d(p^*) = 0 \\ d&#39;(p^*)p^*+d(P^*) - d&#39;(p^*)c\]</span></p>
+<p>Since <span class="math inline">\(d&#39;(p) = \alpha\)</span> the formula be like:</p>
+<p><span class="math display">\[d&#39;(p^*)p+d(p^*) = d&#39;(p^*)c, \\ \alpha p^* + \alpha p^* + \beta = \alpha c, \\ p^* = \frac{\alpha c - \beta}{2 \alpha}.\]</span></p>
+</div>
+<div id="fit-a-demand-model" class="section level3">
+<h3>Fit a demand model</h3>
+<p>let’s see how to calculate the optimum prices for this demand functions. Assumed that the <em>marginal cost</em> is $50. So we create an object called <code>mc</code> with value 50. For the demo purpose, we will only use Semarang region. So lets first subset the data.</p>
+<pre class="r"><code>mc &lt;- 50
+
+shoes_filter &lt;- shoes %&gt;% 
+  filter(region == &quot;Semarang&quot;)
+
+shoes_filter %&gt;% 
+  head()</code></pre>
+<pre><code>#&gt; # A tibble: 6 x 4
+#&gt;   region   date       price quantity
+#&gt;   &lt;chr&gt;    &lt;date&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+#&gt; 1 Semarang 2015-01-04  64      6586.
+#&gt; 2 Semarang 2015-01-11  61      8623.
+#&gt; 3 Semarang 2015-01-18  62     10381.
+#&gt; 4 Semarang 2015-01-25  67.5    6173.
+#&gt; 5 Semarang 2015-02-01  60      7935.
+#&gt; 6 Semarang 2015-02-08  61.5   11534.</code></pre>
+<p>Next, we create a new column <code>profit</code> which is the calculation of profit with the formula we discussed earlier.</p>
+<pre class="r"><code>shoes_agg &lt;- shoes_filter %&gt;% 
+  mutate(profit = quantity*(price-mc))
+
+head(shoes_agg)</code></pre>
+<pre><code>#&gt; # A tibble: 6 x 5
+#&gt;   region   date       price quantity  profit
+#&gt;   &lt;chr&gt;    &lt;date&gt;     &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;
+#&gt; 1 Semarang 2015-01-04  64      6586.  92198.
+#&gt; 2 Semarang 2015-01-11  61      8623.  94856.
+#&gt; 3 Semarang 2015-01-18  62     10381. 124571.
+#&gt; 4 Semarang 2015-01-25  67.5    6173. 108020.
+#&gt; 5 Semarang 2015-02-01  60      7935.  79346.
+#&gt; 6 Semarang 2015-02-08  61.5   11534. 132640.</code></pre>
+<p>Create a linear model in R is as convenient as you’d wish it to be. We will call the <code>lm()</code> function and specify two parameters: the <code>formula</code> for our linear model and the <code>data</code> from which our model is built from. Notice that we will saved model_lm as a linear model and we can now use the attributes of model_lm, such as its $coefficients to create our price optimization later.</p>
+<pre class="r"><code>shoes_agg %&gt;% 
+  ggplot(mapping = aes(x = price, y = quantity)) +
+  geom_point()</code></pre>
+<p><img src="http://ahmadhusain.in/post/price-optimization/index_files/figure-html/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># Fit of the demand model
+
+model_lm &lt;- lm(formula = quantity~price, data = shoes_agg)
+summary(model_lm)</code></pre>
+<pre><code>#&gt; 
+#&gt; Call:
+#&gt; lm(formula = quantity ~ price, data = shoes_agg)
+#&gt; 
+#&gt; Residuals:
+#&gt;     Min      1Q  Median      3Q     Max 
+#&gt; -3770.6 -1539.0  -276.3  1420.5  9452.7 
+#&gt; 
+#&gt; Coefficients:
+#&gt;              Estimate Std. Error t value            Pr(&gt;|t|)    
+#&gt; (Intercept) 13726.073    591.550   23.20 &lt;0.0000000000000002 ***
+#&gt; price         -90.679      7.136  -12.71 &lt;0.0000000000000002 ***
+#&gt; ---
+#&gt; Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+#&gt; 
+#&gt; Residual standard error: 2195 on 167 degrees of freedom
+#&gt; Multiple R-squared:  0.4916, Adjusted R-squared:  0.4885 
+#&gt; F-statistic: 161.5 on 1 and 167 DF,  p-value: &lt; 0.00000000000000022</code></pre>
+<p>slope -&gt; slope nya bernilai negatif, karena korelasi antara price dan quantity juga negatif. artinya ketika price nya semakin tinggi maka berdampak pada quantity produk terjual semakin sedikit.</p>
+<p>variabel price signifikan mempengaruhi variabel quantity karena pvalue lebih kecil dibandingkan 0.05.</p>
+<p>From the output of the <code>summary()</code> call, we see the two coefficients that represent our <em>model line</em>. The point at which our line crosses the y-intercept is 13726.073 (<span class="math inline">\(\alpha\)</span>) and the slope (<span class="math inline">\(\beta\)</span>) is -90.679.</p>
+<pre class="r"><code># extract slope and intercept from the model.
+
+alpha &lt;- model_lm$coefficients[2]
+beta &lt;-  model_lm$coefficients[1]</code></pre>
+<pre><code>#&gt; aplha: -90.67915</code></pre>
+<pre><code>#&gt; beta: 13726.07</code></pre>
+</div>
+<div id="find-optimal-price" class="section level3">
+<h3>Find Optimal Price</h3>
+<p>Next, we will create a new column called <code>profit_fitted</code> to <em>estimate the profit</em> from the <code>model_lm</code>. The idea is to compare the actual profit, and the estimated profit derived from the model.</p>
+<pre class="r"><code>shoes_agg &lt;- shoes_agg %&gt;% 
+  mutate(profit_fitted = model_lm$fitted.values*(price - mc))
+
+shoes_agg %&gt;% 
+  head()</code></pre>
+<pre><code>#&gt; # A tibble: 6 x 6
+#&gt;   region   date       price quantity  profit profit_fitted
+#&gt;   &lt;chr&gt;    &lt;date&gt;     &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;         &lt;dbl&gt;
+#&gt; 1 Semarang 2015-01-04  64      6586.  92198.       110917.
+#&gt; 2 Semarang 2015-01-11  61      8623.  94856.        90141.
+#&gt; 3 Semarang 2015-01-18  62     10381. 124571.        97248.
+#&gt; 4 Semarang 2015-01-25  67.5    6173. 108020.       133092.
+#&gt; 5 Semarang 2015-02-01  60      7935.  79346.        82853.
+#&gt; 6 Semarang 2015-02-08  61.5   11534. 132640.        93717.</code></pre>
+<p>Then, we are going to find the optimal price. So we need to substitute. the <code>alpha</code> and <code>beta</code> values that we obtained before, with the derivative formula of profit.</p>
+<p><span class="math display">\[p^* = \frac{\alpha c - \beta}{2 \alpha}\]</span></p>
+<pre class="r"><code># Optimal Price
+
+price_max_profit &lt;- (alpha*mc - beta)/(2*alpha)
+
+profit_max &lt;- predict(model_lm, newdata = data.frame(price = price_max_profit))*(price_max_profit - mc)</code></pre>
+<pre class="r"><code>price_max_profit</code></pre>
+<pre><code>#&gt;    price 
+#&gt; 100.6848</code></pre>
+<pre class="r"><code>profit_max</code></pre>
+<pre><code>#&gt;    price 
+#&gt; 232950.4</code></pre>
+<p>To convince you, here is the graphic result.</p>
+<pre class="r"><code># Plots
+
+ggplot(shoes_agg) + aes(x = price, y = profit) +
+  geom_point() + 
+  geom_vline(xintercept = price_max_profit, lty = 2) +
+  geom_hline(yintercept = profit_max, lty = 2) +
+  geom_line(aes(x = price, y = profit_fitted), color = &#39;red&#39;) +
+  annotate(geom = &quot;label&quot;, x = price_max_profit, y = profit_max+(profit_max*0.15), label = paste(&quot;Optimal Price at $&quot;, round(price_max_profit,2)))</code></pre>
+<p><img src="http://ahmadhusain.in/post/price-optimization/index_files/figure-html/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>From result above, the right price to optimize the profit is about $ 100.68. This look make sense, because from the historical data and graphic, if we shift the price value to the right (which mean increasing value), there will possibility that customer are reluctant to buy the produt so the profit decreases.</p>
+<p><strong>Dive Deeper:</strong> it’s your turn to try to find optimal prices for other regions. Please create a new chunk below and you can follow the previous step.</p>
+<pre class="r"><code># your solution here</code></pre>
+</div>
+</div>
+<div id="dynamic-price-with-time-interval" class="section level2">
+<h2>Dynamic Price with time interval</h2>
+<p>Price Differentiation:</p>
+<ul>
+<li>Differentiation with demand shifting</li>
+</ul>
+<p>The shifting effect is especially important in cases of constrained supply because it can help to achieve a more even demand distribution and reduce stockout. For example, the supply of seats in a Cinema is fixed but the demand can vary significantly, typically reaching its maximum on the weekend and its minimum on weekdays. The Cinema can lose potential revenue if the peak demand on the weekends exceeds the capacity. We can expect that setting variable ticket prices for different days of the week can improve profits because the higher demand on the weekends enables the Cinema to charge higher prices and make better margins, please look at following graphic:</p>
+<div class="figure" style="text-align: center"><span id="fig:unnamed-chunk-15"></span>
+<img src="img/Cinema.png" alt="Example of ticket price optimization for a Cinema. The vertical bars represent the number of seats sold, and the points are the ticket prices for the corresponding days." width="800px" />
+<p class="caption">
+Figure 1: Example of ticket price optimization for a Cinema. The vertical bars represent the number of seats sold, and the points are the ticket prices for the corresponding days.
+</p>
+</div>
+<ul>
+<li>Differentiation with constrained supply</li>
+</ul>
+<p>The previous method for price optimization we have considered a demand function to setting prices that maybe the optimal possible profit. Those assumption is reasonably fair, for some industries, like supermarket, where stockouts are rare. However, it does not hold in many other industries that face different supply constraints. In this section, we will discuss a relatively simple case, in which each market segment has a fixed capacity of a product and we need to find the optimal global price or segment-level prices</p>
+<div id="introduction-linear-programming" class="section level3">
+<h3>Introduction Linear Programming</h3>
+<p>We will use method called <em>linear programming</em> to optimize the objective function. Here is a brief explanation about linear programming. Linear Programming is basically a subset of optimization. Linear programming or linear optimization is an optimization technique wherein we try to find an optimal value for a linear objective function for a system of linear constraints using a varying set of decision variables. Its also known as sensitivity analysis. There are two important things:</p>
+<ul>
+<li>sensitivity of the optimal solution to changes in the available resources, i.e., the right hand side (RHS) of the constraint</li>
+<li>sensitivity of the optimal solution to the changes in unit profit or unit cost, i.e., coefficient of the objective function.</li>
+</ul>
+<p>Case study:</p>
+<p>A retailer is going to divide their 50 factory between two groups. Production cost for group A is <code>$10</code> per factory. Production cost for group B is <code>$20</code> per factory. The retailer can spend at most <code>$700</code> on production seed. If group B brings in a profit of <code>$150</code> per factory and group A brings a profit of <code>140</code> per factory, how many factories should the retailer push to maximize their profit?</p>
+<p>Lets create an objective function:</p>
+<p><span class="math display">\[P = 140a + 150b\]</span>
+where a is the number of factories of group A, and b is vice versa.</p>
+<p>Constraints:</p>
+<p><span class="math display">\[a + b \leqslant 50 \\ 10a + 20b \leqslant 700 \\ a \geqslant 0 \\ b \geqslant 0 \]</span>
+### Convert objective function to R code</p>
+<p>lets convert to R code:</p>
+<p>linprog:</p>
+<ul>
+<li>cc = fungsi tujuan / fungsi objective</li>
+<li>Aeq = constraint</li>
+<li>beq = RHS (batas maksimum/minimum dari fungsi constraint)</li>
+</ul>
+<pre class="r"><code># setup objective function and constraints
+
+obj_func &lt;- c(140, 150)
+constrain1 &lt;- matrix(c(1,1,10,20), nrow = 2, byrow = T)
+rhs1 &lt;- c(50,700)
+
+# linear programming
+
+linprog(cc = obj_func, Aeq  = constrain1, beq =rhs1)</code></pre>
+<pre><code>#&gt; $x
+#&gt; [1] 30 20
+#&gt; 
+#&gt; $fval
+#&gt; [1] 7200
+#&gt; 
+#&gt; $errno
+#&gt; [1] 1
+#&gt; 
+#&gt; $message
+#&gt; [1] &quot;Solver LP converged successfully.&quot;</code></pre>
+<p>The maximum z value (and thus, the optimum) that can be obtained while satisfying the given constraints is 7200, where x1 = 30 and x2 = 20. So the maximum profit is 7200 when the retailer push 30 factory of group A and 20 factory of group B.</p>
+<p><span class="math display">\[P = 140*30 + 150*20\]</span></p>
+<pre class="r"><code>140*30 + 150*20</code></pre>
+<pre><code>#&gt; [1] 7200</code></pre>
+<p><strong>Dive deeper</strong></p>
+<p>A company manufactures and sell 2 type of product “A” and “B”. The cost of production of each unit A and B is <code>$2</code> and <code>$1</code> respectively. Each unit of A yields a profit of <code>$50</code> and each unit of B yields a profit of <code>$18</code> on selling. Company estimates the monthly demand of A and B to be at maximum of 80 units in all. The production budget for the month is set at <code>$ 100</code>. How many units should the company manufacture in order to earn maximum profit from its monthly sales of A and B?</p>
+<p>objective function:</p>
+<p><span class="math display">\[P = 50A + 18B\]</span></p>
+<p>constraint:</p>
+<p><span class="math display">\[a + b \leqslant 80 \\ 2a + 1b \leqslant 100 \\ a \geqslant 0 \\ b \geqslant 0 \]</span></p>
+<pre class="r"><code># your code here
+
+# setup objective function and constraints
+
+obj_func2 &lt;- c(50, 18) 
+constrain2 &lt;- matrix(c(1,1,2,1), nrow = 2, byrow = T) 
+rhs2 &lt;- c(80,100) 
+
+# linear programming 
+
+linprog(cc = obj_func2, Aeq = constrain2, beq =rhs2) </code></pre>
+<pre><code>#&gt; $x
+#&gt; [1] 20 60
+#&gt; 
+#&gt; $fval
+#&gt; [1] 2080
+#&gt; 
+#&gt; $errno
+#&gt; [1] 1
+#&gt; 
+#&gt; $message
+#&gt; [1] &quot;Solver LP converged successfully.&quot;</code></pre>
+<blockquote>
+<p>The maximum z value (and thus, the optimum) that can be obtained while satisfying the given constraints is 2080, where A = 20 and B = 60. So the maximum profit is $2080 when the company sell 20 product A and 60 product B.</p>
+</blockquote>
+</div>
+<div id="case-study" class="section level3">
+<h3>Case study</h3>
+<p>After you understand the basic concept is, lets go through the main topic, with <code>shoes</code> dataset. If the shoes retailer want to plans a four week sale campaign for a single product. We need to prepare the data first to get weekly demand vs pricing.</p>
+<pre class="r"><code>data_agg &lt;- shoes_filter %&gt;% 
+  mutate(week = ceiling(day(date) / 7)) %&gt;% 
+  filter(week != 5) %&gt;% 
+  select(week, price, quantity)
+
+data_agg %&gt;% 
+  ggplot(aes(x = price, y = quantity)) +
+  geom_point() +
+  geom_smooth() +
+  facet_wrap(facets = vars(week))</code></pre>
+<p><img src="http://ahmadhusain.in/post/price-optimization/index_files/figure-html/unnamed-chunk-19-1.png" width="672" style="display: block; margin: auto;" />
+to get the <em>demand function</em>, we need to create a linear model model for each week group. Lets do it and look the intercept and slope value.</p>
+<pre class="r"><code>fitted_models &lt;- data_agg %&gt;% 
+  group_by(week) %&gt;% 
+  do(model = lm(quantity ~ price, data = .))</code></pre>
+<pre class="r"><code>cat(&quot;model linear minggu pertama: \n&quot;)</code></pre>
+<pre><code>#&gt; model linear minggu pertama:</code></pre>
+<pre class="r"><code>fitted_models$model[[1]] </code></pre>
+<pre><code>#&gt; 
+#&gt; Call:
+#&gt; lm(formula = quantity ~ price, data = .)
+#&gt; 
+#&gt; Coefficients:
+#&gt; (Intercept)        price  
+#&gt;    12497.97       -76.43</code></pre>
+<pre class="r"><code>cat(&quot;--------- \n \n&quot;)</code></pre>
+<pre><code>#&gt; --------- 
+#&gt; </code></pre>
+<pre class="r"><code>cat(&quot;model linear minggu kedua: \n&quot;)</code></pre>
+<pre><code>#&gt; model linear minggu kedua:</code></pre>
+<pre class="r"><code>fitted_models$model[[2]] </code></pre>
+<pre><code>#&gt; 
+#&gt; Call:
+#&gt; lm(formula = quantity ~ price, data = .)
+#&gt; 
+#&gt; Coefficients:
+#&gt; (Intercept)        price  
+#&gt;     15365.4       -106.5</code></pre>
+<pre class="r"><code>cat(&quot;--------- \n \n&quot;)</code></pre>
+<pre><code>#&gt; --------- 
+#&gt; </code></pre>
+<pre class="r"><code>cat(&quot;model linear minggu ketiga: \n&quot;)</code></pre>
+<pre><code>#&gt; model linear minggu ketiga:</code></pre>
+<pre class="r"><code>fitted_models$model[[3]] </code></pre>
+<pre><code>#&gt; 
+#&gt; Call:
+#&gt; lm(formula = quantity ~ price, data = .)
+#&gt; 
+#&gt; Coefficients:
+#&gt; (Intercept)        price  
+#&gt;    13213.18       -88.44</code></pre>
+<pre class="r"><code>cat(&quot;--------- \n \n&quot;)</code></pre>
+<pre><code>#&gt; --------- 
+#&gt; </code></pre>
+<pre class="r"><code>cat(&quot;model linear minggu keempat: \n&quot;)</code></pre>
+<pre><code>#&gt; model linear minggu keempat:</code></pre>
+<pre class="r"><code>fitted_models$model[[4]] </code></pre>
+<pre><code>#&gt; 
+#&gt; Call:
+#&gt; lm(formula = quantity ~ price, data = .)
+#&gt; 
+#&gt; Coefficients:
+#&gt; (Intercept)        price  
+#&gt;     14363.2        -98.1</code></pre>
+<pre class="r"><code># allowed price levels
+
+price_list &lt;- c(39, 59, 79, 99, 129, 149)
+
+# t number of time intervals you want to recommend
+
+t &lt;- 4
+
+# subtitute all price value to demand function
+
+demand_w1 &lt;- 12497.97 - 76.43*price_list
+demand_w2 &lt;- 15365.4 - 106.5*price_list
+demand_w3 &lt;- 13213.18 - 88.44*price_list
+demand_w4 &lt;- 14363.2 - 98.1*price_list</code></pre>
+<pre class="r"><code>demand_vec &lt;- c(demand_w1, demand_w2, demand_w3, demand_w4)
+demand_vec &lt;- ifelse(demand_vec &lt; 0, 0, demand_vec)
+demand_mat &lt;- matrix(demand_vec, nrow = 1, byrow = TRUE)
+
+cat(&quot;demand matrix: \n \n&quot;)</code></pre>
+<pre><code>#&gt; demand matrix: 
+#&gt; </code></pre>
+<pre class="r"><code>demand_mat</code></pre>
+<pre><code>#&gt;        [,1]   [,2] [,3]   [,4]   [,5]   [,6]    [,7]   [,8]   [,9]  [,10]
+#&gt; [1,] 9517.2 7988.6 6460 4931.4 2638.5 1109.9 11211.9 9081.9 6951.9 4821.9
+#&gt;       [,11] [,12]   [,13]   [,14]   [,15]   [,16]   [,17] [,18]   [,19]  [,20]
+#&gt; [1,] 1626.9     0 9764.02 7995.22 6226.42 4457.62 1804.42 35.62 10537.3 8575.3
+#&gt;       [,21]  [,22]  [,23] [,24]
+#&gt; [1,] 6613.3 4651.3 1708.3     0</code></pre>
+<pre class="r"><code># Evaluate revenue for each demand function and each price level
+
+# fungsi objektif
+
+revenue_vec &lt;- demand_vec*price_list
+
+
+cat(&quot;revenue vector: \n \n&quot;)</code></pre>
+<pre><code>#&gt; revenue vector: 
+#&gt; </code></pre>
+<pre class="r"><code>revenue_vec</code></pre>
+<pre><code>#&gt;  [1] 371170.80 471327.40 510340.00 488208.60 340366.50 165375.10 437264.10
+#&gt;  [8] 535832.10 549200.10 477368.10 209870.10      0.00 380796.78 471717.98
+#&gt; [15] 491887.18 441304.38 232770.18   5307.38 410954.70 505942.70 522450.70
+#&gt; [22] 460478.70 220370.70      0.00</code></pre>
+<blockquote>
+<p>Now we solve the following optimization problem: <a href="https://www.amazon.com/Introduction-Algorithmic-Marketing-Artificial-Intelligence/dp/0692989048">Introduction to Algorithmic Marketing: AI for Marketing Operation</a></p>
+</blockquote>
+<p><span class="math display">\[\displaystyle \max_{z} \ \sum_{t=1}^{T}\sum_{i=1}^{K} z_{it} \ . \ P_i \ . \ q(p_i,t) \\ 
+subject \ to \sum_{t=1}^{T}\sum_{i=1}^{K} z_{it} \ . \ q(P_i,t) \le C \\ 
+\sum_{i=1}^{K} z_{it} = 1, \ for \ t = 1,...,T \\
+z_{it} \ge 0\]</span></p>
+<p>where q is demand, P is price, T is the number of time periods, and K is the number of price levels. Next we create the constraints formulas:</p>
+<ul>
+<li>First we generate a binary mask to ensure all Z’s in one time interval sum up to 1.</li>
+<li>Second, we ensure that the sum of all demands is less than the available stock level, that is <span class="math inline">\(z_{it} \ . \ q(P_i,t) \le C\)</span>.</li>
+</ul>
+<pre class="r"><code># constraint --------------------------------------------------------
+
+create_mat &lt;- function(i, k) {
+  
+  # create zero matrix
+  
+  mat_array &lt;- matrix(data = 0,
+                      ncol = i * k,
+                      nrow = i)
+  
+  # filling values for each row
+  
+  for (row_mat in 1:i) {
+    mat_array[row_mat, (row_mat * k):(row_mat * k - (k - 1))] &lt;- 1
+  }
+  return(mat_array)
+  
+}
+
+constrain_1 &lt;- create_mat(i = t, k = length(price_list))
+
+constrain_2 &lt;- rep(1, t)</code></pre>
+<p>Then, we do the linear program, and put all the value into the argument. Do not forget to determined the <code>b</code> argument, which is product capacity.</p>
+<pre class="r"><code># linear program
+
+set.seed(9999)
+
+result &lt;- linprog(cc = revenue_vec,  A = demand_mat, b = 10000, Aeq = constrain_1, beq = constrain_2, maximize = T)
+
+cat(paste(&quot;Total Revenue: $&quot;, round(result$fva, 2)), &quot;\n \n&quot;)</code></pre>
+<pre><code>#&gt; Total Revenue: $ 1189402.04 
+#&gt; </code></pre>
+<pre class="r"><code>cat(&quot;Price schedule: \n&quot;)</code></pre>
+<pre><code>#&gt; Price schedule:</code></pre>
+<pre class="r"><code>matrix(result$x, nrow = length(price_list), ncol = t, byrow = F) </code></pre>
+<pre><code>#&gt;      [,1]      [,2] [,3] [,4]
+#&gt; [1,]    0 0.0000000    0    0
+#&gt; [2,]    0 0.0000000    0    0
+#&gt; [3,]    0 0.0000000    0    0
+#&gt; [4,]    0 0.6954241    0    0
+#&gt; [5,]    1 0.3045759    1    1
+#&gt; [6,]    0 0.0000000    0    0</code></pre>
+<p>Each column of the solution matrix corresponds to a time period (one week). Each row corresponds to z value that can be interpreted as the percentage of time z’t price level should be used in the corresponding time period. We can interpret, the optimal price is <code>$129</code> for the first, third, and fourth weeks when the capacity product is 10,000 items. For the same capacity, the price is fractional for the second week, which means a mix with 69% at <code>$99</code> and 31% at <code>$129</code>.</p>
+<p>with 10000 product stock available, we can determine the schedule price as follows:</p>
+<ol style="list-style-type: decimal">
+<li>The first week sell 2838 stocks at a price of <code>$129</code>, the estimated revenue earned was around <code>$340,366.50</code></li>
+<li>The second week sell 3353 stocks at <code>$99</code>, and 495 at <code>$129</code>, the estimated revenue earned was around <code>$331,973.28</code> + <code>$63,921.37</code> or around <code>$389,594</code></li>
+<li>The third week sell 1804 stocks at a price of <code>$129</code>, estimated revenue <code>$232,770.18</code></li>
+<li>Fourth week sell 1708 stocks at price <code>$129</code>, estimated revenue <code>$220,370.70</code></li>
+</ol>
+<p>So the total revenue which company will earn if all product are sold is approx <code>$1,189,402.04</code></p>
+<p><strong>Dive Deeper</strong>:</p>
+<p>Let us now consider an example of a retailer who plans a four-week sale campaign for a single product. The set of allowed prices includes five levels: <code>$89, $79, $69, $59, and $49</code>. Demand functions are estimated for each week of the sale as follows:</p>
+<p>week 1: 1500 - 10p
+week 2: 1300 - 15p
+week 3: 1200 - 15p
+week 4: 1100 - 18p</p>
+<ol style="list-style-type: decimal">
+<li>Find the optimal price for each week if the product capacity is 1300.</li>
+<li>What is the estimated revenue obtained if you use the price combination above?</li>
+</ol>
+<hr />
+</div>
+</div>
+</div>
+
+</div>
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="http://ahmadhusain.in/tags/linear-programming/">Linear Programming</a></li>
+      <li><a href="http://ahmadhusain.in/tags/price-optimization/">Price Optimization</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="next" href="http://ahmadhusain.in/post/2021-06-22-mercari-price-suggestion/">
+    <span class="title">Next Page »</span>
+    <br>
+    <span>Mercari Price Suggestion</span>
+  </a>
+</nav>
+
+<div class="share-buttons">
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Price Optimization on twitter"
+        href="https://twitter.com/intent/tweet/?text=Price%20Optimization&amp;url=http%3a%2f%2fahmadhusain.in%2fpost%2fprice-optimization%2f&amp;hashtags=LinearProgramming%2cPriceOptimization">
+        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve">
+            <path
+                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-253.927,424.544c135.939,0 210.268,-112.643 210.268,-210.268c0,-3.218 0,-6.437 -0.153,-9.502c14.406,-10.421 26.973,-23.448 36.935,-38.314c-13.18,5.824 -27.433,9.809 -42.452,11.648c15.326,-9.196 26.973,-23.602 32.49,-40.92c-14.252,8.429 -30.038,14.56 -46.896,17.931c-13.487,-14.406 -32.644,-23.295 -53.946,-23.295c-40.767,0 -73.87,33.104 -73.87,73.87c0,5.824 0.613,11.494 1.992,16.858c-61.456,-3.065 -115.862,-32.49 -152.337,-77.241c-6.284,10.881 -9.962,23.601 -9.962,37.088c0,25.594 13.027,48.276 32.95,61.456c-12.107,-0.307 -23.448,-3.678 -33.41,-9.196l0,0.92c0,35.862 25.441,65.594 59.311,72.49c-6.13,1.686 -12.72,2.606 -19.464,2.606c-4.751,0 -9.348,-0.46 -13.946,-1.38c9.349,29.426 36.628,50.728 68.965,51.341c-25.287,19.771 -57.164,31.571 -91.8,31.571c-5.977,0 -11.801,-0.306 -17.625,-1.073c32.337,21.15 71.264,33.41 112.95,33.41Z" />
+        </svg>
+    </a>
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Price Optimization on linkedin"
+        href="https://www.linkedin.com/shareArticle?mini=true&amp;url=http%3a%2f%2fahmadhusain.in%2fpost%2fprice-optimization%2f&amp;title=Price%20Optimization&amp;summary=Price%20Optimization&amp;source=http%3a%2f%2fahmadhusain.in%2fpost%2fprice-optimization%2f">
+        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve">
+            <path
+                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-288.985,423.278l0,-225.717l-75.04,0l0,225.717l75.04,0Zm270.539,0l0,-129.439c0,-69.333 -37.018,-101.586 -86.381,-101.586c-39.804,0 -57.634,21.891 -67.617,37.266l0,-31.958l-75.021,0c0.995,21.181 0,225.717 0,225.717l75.02,0l0,-126.056c0,-6.748 0.486,-13.492 2.474,-18.315c5.414,-13.475 17.767,-27.434 38.494,-27.434c27.135,0 38.007,20.707 38.007,51.037l0,120.768l75.024,0Zm-307.552,-334.556c-25.674,0 -42.448,16.879 -42.448,39.002c0,21.658 16.264,39.002 41.455,39.002l0.484,0c26.165,0 42.452,-17.344 42.452,-39.002c-0.485,-22.092 -16.241,-38.954 -41.943,-39.002Z" />
+        </svg>
+    </a>
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Price Optimization on reddit"
+        href="https://reddit.com/submit?url=http%3a%2f%2fahmadhusain.in%2fpost%2fprice-optimization%2f&title=Price%20Optimization">
+        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve">
+            <path
+                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-3.446,265.638c0,-22.964 -18.616,-41.58 -41.58,-41.58c-11.211,0 -21.361,4.457 -28.841,11.666c-28.424,-20.508 -67.586,-33.757 -111.204,-35.278l18.941,-89.121l61.884,13.157c0.756,15.734 13.642,28.29 29.56,28.29c16.407,0 29.706,-13.299 29.706,-29.701c0,-16.403 -13.299,-29.702 -29.706,-29.702c-11.666,0 -21.657,6.792 -26.515,16.578l-69.105,-14.69c-1.922,-0.418 -3.939,-0.042 -5.585,1.036c-1.658,1.073 -2.811,2.761 -3.224,4.686l-21.152,99.438c-44.258,1.228 -84.046,14.494 -112.837,35.232c-7.468,-7.164 -17.589,-11.591 -28.757,-11.591c-22.965,0 -41.585,18.616 -41.585,41.58c0,16.896 10.095,31.41 24.568,37.918c-0.639,4.135 -0.99,8.328 -0.99,12.576c0,63.977 74.469,115.836 166.33,115.836c91.861,0 166.334,-51.859 166.334,-115.836c0,-4.218 -0.347,-8.387 -0.977,-12.493c14.564,-6.47 24.735,-21.034 24.735,-38.001Zm-119.474,108.193c-20.27,20.241 -59.115,21.816 -70.534,21.816c-11.428,0 -50.277,-1.575 -70.522,-21.82c-3.007,-3.008 -3.007,-7.882 0,-10.889c3.003,-2.999 7.882,-3.003 10.885,0c12.777,12.781 40.11,17.317 59.637,17.317c19.522,0 46.86,-4.536 59.657,-17.321c3.016,-2.999 7.886,-2.995 10.885,0.008c3.008,3.011 3.003,7.882 -0.008,10.889Zm-5.23,-48.781c-16.373,0 -29.701,-13.324 -29.701,-29.698c0,-16.381 13.328,-29.714 29.701,-29.714c16.378,0 29.706,13.333 29.706,29.714c0,16.374 -13.328,29.698 -29.706,29.698Zm-160.386,-29.702c0,-16.381 13.328,-29.71 29.714,-29.71c16.369,0 29.689,13.329 29.689,29.71c0,16.373 -13.32,29.693 -29.689,29.693c-16.386,0 -29.714,-13.32 -29.714,-29.693Z" />
+        </svg>
+    </a>
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Price Optimization on facebook"
+        href="https://facebook.com/sharer/sharer.php?u=http%3a%2f%2fahmadhusain.in%2fpost%2fprice-optimization%2f">
+        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve">
+            <path
+                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-106.468,0l0,-192.915l66.6,0l12.672,-82.621l-79.272,0l0,-53.617c0,-22.603 11.073,-44.636 46.58,-44.636l36.042,0l0,-70.34c0,0 -32.71,-5.582 -63.982,-5.582c-65.288,0 -107.96,39.569 -107.96,111.204l0,62.971l-72.573,0l0,82.621l72.573,0l0,192.915l-191.104,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Z" />
+        </svg>
+    </a>
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Price Optimization on whatsapp"
+        href="https://api.whatsapp.com/send?text=Price%20Optimization%20-%20http%3a%2f%2fahmadhusain.in%2fpost%2fprice-optimization%2f">
+        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve">
+            <path
+                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-58.673,127.703c-33.842,-33.881 -78.847,-52.548 -126.798,-52.568c-98.799,0 -179.21,80.405 -179.249,179.234c-0.013,31.593 8.241,62.428 23.927,89.612l-25.429,92.884l95.021,-24.925c26.181,14.28 55.659,21.807 85.658,21.816l0.074,0c98.789,0 179.206,-80.413 179.247,-179.243c0.018,-47.895 -18.61,-92.93 -52.451,-126.81Zm-126.797,275.782l-0.06,0c-26.734,-0.01 -52.954,-7.193 -75.828,-20.767l-5.441,-3.229l-56.386,14.792l15.05,-54.977l-3.542,-5.637c-14.913,-23.72 -22.791,-51.136 -22.779,-79.287c0.033,-82.142 66.867,-148.971 149.046,-148.971c39.793,0.014 77.199,15.531 105.329,43.692c28.128,28.16 43.609,65.592 43.594,105.4c-0.034,82.149 -66.866,148.983 -148.983,148.984Zm81.721,-111.581c-4.479,-2.242 -26.499,-13.075 -30.604,-14.571c-4.105,-1.495 -7.091,-2.241 -10.077,2.241c-2.986,4.483 -11.569,14.572 -14.182,17.562c-2.612,2.988 -5.225,3.364 -9.703,1.12c-4.479,-2.241 -18.91,-6.97 -36.017,-22.23c-13.314,-11.876 -22.304,-26.542 -24.916,-31.026c-2.612,-4.484 -0.279,-6.908 1.963,-9.14c2.016,-2.007 4.48,-5.232 6.719,-7.847c2.24,-2.615 2.986,-4.484 4.479,-7.472c1.493,-2.99 0.747,-5.604 -0.374,-7.846c-1.119,-2.241 -10.077,-24.288 -13.809,-33.256c-3.635,-8.733 -7.327,-7.55 -10.077,-7.688c-2.609,-0.13 -5.598,-0.158 -8.583,-0.158c-2.986,0 -7.839,1.121 -11.944,5.604c-4.105,4.484 -15.675,15.32 -15.675,37.364c0,22.046 16.048,43.342 18.287,46.332c2.24,2.99 31.582,48.227 76.511,67.627c10.685,4.615 19.028,7.371 25.533,9.434c10.728,3.41 20.492,2.929 28.209,1.775c8.605,-1.285 26.499,-10.833 30.231,-21.295c3.732,-10.464 3.732,-19.431 2.612,-21.298c-1.119,-1.869 -4.105,-2.99 -8.583,-5.232Z" />
+        </svg>
+    </a>
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Price Optimization on telegram"
+        href="https://telegram.me/share/url?text=Price%20Optimization&amp;url=http%3a%2f%2fahmadhusain.in%2fpost%2fprice-optimization%2f">
+        <svg version="1.1" xml:space="preserve" viewBox="2 2 28 28">
+            <path
+                d="M26.49,29.86H5.5a3.37,3.37,0,0,1-2.47-1,3.35,3.35,0,0,1-1-2.47V5.48A3.36,3.36,0,0,1,3,3,3.37,3.37,0,0,1,5.5,2h21A3.38,3.38,0,0,1,29,3a3.36,3.36,0,0,1,1,2.46V26.37a3.35,3.35,0,0,1-1,2.47A3.38,3.38,0,0,1,26.49,29.86Zm-5.38-6.71a.79.79,0,0,0,.85-.66L24.73,9.24a.55.55,0,0,0-.18-.46.62.62,0,0,0-.41-.17q-.08,0-16.53,6.11a.59.59,0,0,0-.41.59.57.57,0,0,0,.43.52l4,1.24,1.61,4.83a.62.62,0,0,0,.63.43.56.56,0,0,0,.4-.17L16.54,20l4.09,3A.9.9,0,0,0,21.11,23.15ZM13.8,20.71l-1.21-4q8.72-5.55,8.78-5.55c.15,0,.23,0,.23.16a.18.18,0,0,1,0,.06s-2.51,2.3-7.52,6.8Z" />
+        </svg>
+    </a>
+</div>
+
+  </footer>
+</article>
+    </main>
+    <footer class="footer">
+    <span>&copy; 2021 <a href="http://ahmadhusain.in/">Husain&#39;s Blog</a></span>
+    <span>&middot;</span>
+    <span>Powered by <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a></span>
+    <span>&middot;</span>
+    <span>Theme <a href="https://git.io/hugopapermod" rel="noopener" target="_blank">PaperMod</a></span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)">
+    <button class="top-link" id="top-link" type="button" accesskey="g">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+            <path d="M12 6H0l6-6z" />
+        </svg>
+    </button>
+</a>
+
+<script>
+    window.onload = function () {
+        if (localStorage.getItem("menu-scroll-position")) {
+            document.getElementById('menu').scrollLeft = localStorage.getItem("menu-scroll-position");
+        }
+    }
+
+    function menu_on_scroll() {
+        localStorage.setItem("menu-scroll-position", document.getElementById('menu').scrollLeft);
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerText = 'copy';
+
+        function copyingDone() {
+            copybutton.innerText = 'copied!';
+            setTimeout(() => {
+                copybutton.innerText = 'copy';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        container.appendChild(copybutton);
+    });
+</script>
+</body>
+
+</html>

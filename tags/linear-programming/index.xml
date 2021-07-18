@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Linear Programming on Husain&#39;s Blog</title>
+    <link>http://ahmadhusain.in/tags/linear-programming/</link>
+    <description>Recent content in Linear Programming on Husain&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 23 Jun 2021 00:00:00 +0000</lastBuildDate><atom:link href="http://ahmadhusain.in/tags/linear-programming/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Price Optimization</title>
+      <link>http://ahmadhusain.in/post/price-optimization/</link>
+      <pubDate>Wed, 23 Jun 2021 00:00:00 +0000</pubDate>
+      
+      <guid>http://ahmadhusain.in/post/price-optimization/</guid>
+      <description>Price Optimization A demand model enables us to search for the optimal price by analyzing how the price changes increase or decrease the profits. In practice, however, we face numerous constraints and interdependencies that require much more elaborate and specialized optimization models to be developed. From [AI for Marketing Operation] Book, most of the constraints fall into one of the following three categories: supply constraints, demand constraints, and structural constraints.</description>
+    </item>
+    
+  </channel>
+</rss>

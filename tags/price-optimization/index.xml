@@ -6,7 +6,16 @@
     <description>Recent content in Price Optimization on Husain&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 22 Jun 2021 00:00:00 +0000</lastBuildDate><atom:link href="http://ahmadhusain.in/tags/price-optimization/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 23 Jun 2021 00:00:00 +0000</lastBuildDate><atom:link href="http://ahmadhusain.in/tags/price-optimization/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Price Optimization</title>
+      <link>http://ahmadhusain.in/post/price-optimization/</link>
+      <pubDate>Wed, 23 Jun 2021 00:00:00 +0000</pubDate>
+      
+      <guid>http://ahmadhusain.in/post/price-optimization/</guid>
+      <description>Price Optimization A demand model enables us to search for the optimal price by analyzing how the price changes increase or decrease the profits. In practice, however, we face numerous constraints and interdependencies that require much more elaborate and specialized optimization models to be developed. From [AI for Marketing Operation] Book, most of the constraints fall into one of the following three categories: supply constraints, demand constraints, and structural constraints.</description>
+    </item>
+    
     <item>
       <title>Mercari Price Suggestion</title>
       <link>http://ahmadhusain.in/post/2021-06-22-mercari-price-suggestion/</link>
